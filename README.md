@@ -1,4 +1,4 @@
-These are sources from Programming Game AI By Example by Mat Buckland's book. 
+These are sources from [Programming Game AI By Example by Mat Buckland's book](https://a.co/d/dOdKNXg). 
 
 Since the link in the book is invalid, thanks to [wangchen](https://github.com/wangchen) we have them: [link](https://github.com/wangchen/Programming-Game-AI-by-Example-src).
 
