@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="2D">
+      <UniqueIdentifier>{fffe7618-3f63-4799-9e42-8a88a4ccf897}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Debug">
+      <UniqueIdentifier>{e54f1386-8929-4b72-ab2a-7ec33fc0cfbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FSM">
+      <UniqueIdentifier>{c12fc52f-560c-479b-a657-fb2b28eed3a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fuzzy">
+      <UniqueIdentifier>{2e783e10-eae6-4bb1-8ab8-076a236767f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{b46d4f93-0e46-45bd-8b25-6a0dc00088ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Goals">
+      <UniqueIdentifier>{70907114-f4a2-4130-8143-f316c0619e25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graph">
+      <UniqueIdentifier>{b533a63f-9b8a-455c-9dc4-b7c9c354f0d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Messaging">
+      <UniqueIdentifier>{cc41899c-4424-4319-9304-9f372f3b09a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Misc">
+      <UniqueIdentifier>{39a477a6-0fcc-4de7-928b-4f0164b9481f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Script">
+      <UniqueIdentifier>{40f1cb33-8246-45d9-a58d-c04a2fcbc795}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Time">
+      <UniqueIdentifier>{3e263af8-cdcd-4871-8be8-007251f9a883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Triggers">
+      <UniqueIdentifier>{175df982-b2d2-4caa-9492-452880e90f9b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\C2DMatrix.h">
+      <Filter>2D</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\geometry.h">
+      <Filter>2D</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\InvertedAABBox2D.h">
+      <Filter>2D</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\Transformations.h">
+      <Filter>2D</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\Vector2D.h">
+      <Filter>2D</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\Wall2D.h">
+      <Filter>2D</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\WallIntersectionTests.h">
+      <Filter>2D</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Triggers\Trigger.h">
+      <Filter>Triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Triggers\TriggerRegion.h">
+      <Filter>Triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Triggers\TriggerSystem.h">
+      <Filter>Triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Triggers\Trigger_LimitedLifeTime.h">
+      <Filter>Triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Triggers\Trigger_Respawning.h">
+      <Filter>Triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Time\CrudeTimer.h">
+      <Filter>Time</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Time\PrecisionTimer.h">
+      <Filter>Time</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Time\Regulator.h">
+      <Filter>Time</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Script\Scriptor.h">
+      <Filter>Script</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Messaging\MessageDispatcher.h">
+      <Filter>Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Messaging\Telegram.h">
+      <Filter>Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\autolist.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\CellSpacePartition.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\Cgdi.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\ConsoleUtils.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\FrameCounter.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\iniFileLoaderBase.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\PriorityQueue.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\Smoother.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\Stream_Utility_Functions.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\TypeToString.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\utils.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\WindowUtils.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\AStarHeuristicPolicies.h">
+      <Filter>Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\GraphAlgorithms.h">
+      <Filter>Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\GraphEdgeTypes.h">
+      <Filter>Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\GraphNodeTypes.h">
+      <Filter>Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\HandyGraphFunctions.h">
+      <Filter>Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\NodeTypeEnumerations.h">
+      <Filter>Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\SparseGraph.h">
+      <Filter>Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Goals\Goal.h">
+      <Filter>Goals</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Goals\Goal_Composite.h">
+      <Filter>Goals</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Game\BaseGameEntity.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Game\EntityFunctionTemplates.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Game\EntityManager.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Game\MovingEntity.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Game\Region.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyHedges.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyModule.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyOperators.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyRule.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_LeftShoulder.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_RightShoulder.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_Shoulder.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_Singleton.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_Triangle.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyTerm.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyVariable.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FzSet.h">
+      <Filter>Fuzzy</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)FSM\State.h">
+      <Filter>FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)FSM\StateMachine.h">
+      <Filter>FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Debug\DebugConsole.h">
+      <Filter>Debug</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)2D\Vector2d.cpp">
+      <Filter>2D</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Time\CrudeTimer.cpp">
+      <Filter>Time</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Time\PrecisionTimer.cpp">
+      <Filter>Time</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Messaging\MessageDispatcher.cpp">
+      <Filter>Messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Misc\Cgdi.cpp">
+      <Filter>Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Misc\FrameCounter.cpp">
+      <Filter>Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Misc\iniFileLoaderBase.cpp">
+      <Filter>Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Misc\WindowUtils.cpp">
+      <Filter>Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Game\BaseGameEntity.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Game\EntityManager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyModule.cpp">
+      <Filter>Fuzzy</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyOperators.cpp">
+      <Filter>Fuzzy</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_LeftShoulder.cpp">
+      <Filter>Fuzzy</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_RightShoulder.cpp">
+      <Filter>Fuzzy</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_Singleton.cpp">
+      <Filter>Fuzzy</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_Triangle.cpp">
+      <Filter>Fuzzy</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyVariable.cpp">
+      <Filter>Fuzzy</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Debug\DebugConsole.cpp">
+      <Filter>Debug</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

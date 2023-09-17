@@ -1,0 +1,5 @@
+﻿  Pathfinder.cpp
+  main.cpp
+E:\Projects\VS\ProgrammingGameAIByExample\Pathfinder\Files\main.cpp(515,33): warning C4312: 'type cast': conversion from 'LONG' to 'HINSTANCE' of greater size
+  Generating Code...
+  Pathfinder.vcxproj -> E:\Projects\VS\ProgrammingGameAIByExample\Pathfinder\Output\Executable\Pathfinder.exe

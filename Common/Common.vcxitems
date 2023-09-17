@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{5a80af9a-1fc7-4965-905f-51c0b0d4d7bc}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\C2DMatrix.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\geometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\InvertedAABBox2D.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\Transformations.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\Vector2D.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\Wall2D.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)2D\WallIntersectionTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Debug\DebugConsole.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)FSM\State.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)FSM\StateMachine.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyHedges.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyModule.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyOperators.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyRule.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_LeftShoulder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_RightShoulder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_Shoulder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_Singleton.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_Triangle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyTerm.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyVariable.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fuzzy\FzSet.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Game\BaseGameEntity.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Game\EntityFunctionTemplates.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Game\EntityManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Game\MovingEntity.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Game\Region.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Goals\Goal.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Goals\Goal_Composite.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\AStarHeuristicPolicies.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\GraphAlgorithms.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\GraphEdgeTypes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\GraphNodeTypes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\HandyGraphFunctions.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\NodeTypeEnumerations.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Graph\SparseGraph.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Messaging\MessageDispatcher.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Messaging\Telegram.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\autolist.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\CellSpacePartition.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\Cgdi.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\ConsoleUtils.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\FrameCounter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\iniFileLoaderBase.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\PriorityQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\Smoother.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\Stream_Utility_Functions.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\TypeToString.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\utils.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Misc\WindowUtils.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Script\Scriptor.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Time\CrudeTimer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Time\PrecisionTimer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Time\Regulator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Triggers\Trigger.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Triggers\TriggerRegion.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Triggers\TriggerSystem.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Triggers\Trigger_LimitedLifeTime.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Triggers\Trigger_Respawning.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)2D\Vector2d.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Debug\DebugConsole.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyModule.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyOperators.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_LeftShoulder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_RightShoulder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_Singleton.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzySet_Triangle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fuzzy\FuzzyVariable.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Game\BaseGameEntity.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Game\EntityManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Messaging\MessageDispatcher.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Misc\Cgdi.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Misc\FrameCounter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Misc\iniFileLoaderBase.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Misc\WindowUtils.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Time\CrudeTimer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Time\PrecisionTimer.cpp" />
+  </ItemGroup>
+</Project>

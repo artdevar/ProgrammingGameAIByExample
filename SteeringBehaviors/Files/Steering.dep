@@ -1,0 +1,217 @@
+# Microsoft Developer Studio Generated Dependency File, included by Steering.mak
+
+.\GameWorld.cpp : \
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\basetsd.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\guiddef.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\propidl.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\reason.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\stralign.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\tvout.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winefs.h"\
+	"..\Common\2D\C2DMatrix.h"\
+	"..\Common\misc\CellSpacePartition.h"\
+	"..\Common\2D\geometry.h"\
+	"..\Common\2D\Transformations.h"\
+	"..\Common\2D\Vector2D.h"\
+	"..\Common\2D\Wall2D.h"\
+	"..\Buckland_Chapter3-Steering Behaviors\Path.h"\
+	"..\Common\misc\Cgdi.h"\
+	"..\Common\Debug\DebugConsole.h"\
+	"..\Common\Game\BaseGameEntity.h"\
+	"..\Common\Game\MovingEntity.h"\
+	"..\Buckland_Chapter3-Steering Behaviors\Obstacle.h"\
+	"..\Common\misc\iniFileLoaderBase.h"\
+	"..\Common\Time\Regulator.h"\
+	"..\Common\misc\WindowUtils.h"\
+	"..\Common\misc\autolist.h"\
+	"..\Common\misc\Smoother.h"\
+	"..\Common\Time\PrecisionTimer.h"\
+	"..\Common\misc\utils.h"\
+	".\constants.h"\
+	".\GameWorld.h"\
+	".\ParamLoader.h"\
+	".\SteeringBehaviors.h"\
+	".\Vehicle.h"\
+	
+
+.\main.cpp : \
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\basetsd.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\guiddef.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\propidl.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\reason.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\stralign.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\tvout.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winefs.h"\
+	"..\Common\2D\C2DMatrix.h"\
+	"..\Common\misc\CellSpacePartition.h"\
+	"..\Common\2D\geometry.h"\
+	"..\Common\2D\Transformations.h"\
+	"..\Common\2D\Vector2D.h"\
+	"..\Common\misc\Cgdi.h"\
+	"..\Common\Debug\DebugConsole.h"\
+	"..\Common\Game\BaseGameEntity.h"\
+	"..\Common\Game\MovingEntity.h"\
+	"..\Common\misc\iniFileLoaderBase.h"\
+	"..\Common\Time\Regulator.h"\
+	"..\Common\misc\WindowUtils.h"\
+	"..\Common\misc\Smoother.h"\
+	"..\Common\Time\PrecisionTimer.h"\
+	"..\Common\misc\utils.h"\
+	".\constants.h"\
+	".\GameWorld.h"\
+	".\ParamLoader.h"\
+	".\Vehicle.h"\
+	
+
+.\RenderObj.cpp : \
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\basetsd.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\guiddef.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\propidl.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\reason.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\stralign.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\tvout.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winefs.h"\
+	"..\Common\2D\C2DMatrix.h"\
+	"..\Common\2D\geometry.h"\
+	"..\Common\2D\Transformations.h"\
+	"..\Common\2D\Vector2D.h"\
+	"..\Buckland_Chapter3-Steering Behaviors\Path.h"\
+	"..\Common\misc\Cgdi.h"\
+	"..\Common\Game\BaseGameEntity.h"\
+	"..\Common\Game\MovingEntity.h"\
+	"..\Common\misc\iniFileLoaderBase.h"\
+	"..\Common\Time\Regulator.h"\
+	"..\Common\misc\Smoother.h"\
+	"..\Common\misc\utils.h"\
+	".\constants.h"\
+	".\ParamLoader.h"\
+	".\SteeringBehaviors.h"\
+	".\Vehicle.h"\
+	
+
+.\SteeringBehaviors.cpp : \
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\basetsd.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\guiddef.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\propidl.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\reason.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\stralign.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\tvout.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winefs.h"\
+	"..\Common\2D\C2DMatrix.h"\
+	"..\Common\misc\CellSpacePartition.h"\
+	"..\Common\2D\geometry.h"\
+	"..\Common\2D\Transformations.h"\
+	"..\Common\2D\Vector2D.h"\
+	"..\Common\2D\Wall2D.h"\
+	"..\Buckland_Chapter3-Steering Behaviors\Path.h"\
+	"..\Common\misc\Cgdi.h"\
+	"..\Common\Debug\DebugConsole.h"\
+	"..\Common\Game\BaseGameEntity.h"\
+	"..\Common\Game\MovingEntity.h"\
+	"..\Common\misc\iniFileLoaderBase.h"\
+	"..\Common\Time\Regulator.h"\
+	"..\Common\misc\autolist.h"\
+	"..\Common\misc\Smoother.h"\
+	"..\Common\Time\PrecisionTimer.h"\
+	"..\Common\misc\utils.h"\
+	".\constants.h"\
+	".\GameWorld.h"\
+	".\ParamLoader.h"\
+	".\SteeringBehaviors.h"\
+	".\Vehicle.h"\
+	
+
+.\Vehicle.cpp : \
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\basetsd.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\guiddef.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\propidl.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\reason.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\stralign.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\tvout.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winefs.h"\
+	"..\Common\2D\C2DMatrix.h"\
+	"..\Common\misc\CellSpacePartition.h"\
+	"..\Common\2D\geometry.h"\
+	"..\Common\2D\Transformations.h"\
+	"..\Common\2D\Vector2D.h"\
+	"..\Buckland_Chapter3-Steering Behaviors\Path.h"\
+	"..\Common\Debug\DebugConsole.h"\
+	"..\Common\Game\BaseGameEntity.h"\
+	"..\Common\Game\MovingEntity.h"\
+	"..\Common\misc\iniFileLoaderBase.h"\
+	"..\Common\Time\Regulator.h"\
+	"..\Common\misc\Smoother.h"\
+	"..\Common\Time\PrecisionTimer.h"\
+	"..\Common\misc\utils.h"\
+	".\constants.h"\
+	".\GameWorld.h"\
+	".\ParamLoader.h"\
+	".\SteeringBehaviors.h"\
+	".\Vehicle.h"\
+	
+
+..\Common\Debug\DebugConsole.cpp : \
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\basetsd.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\guiddef.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\propidl.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\reason.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\stralign.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\tvout.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winefs.h"\
+	"..\Common\2D\Vector2D.h"\
+	"..\Common\Debug\DebugConsole.h"\
+	"..\Common\misc\utils.h"\
+	
+
+..\Common\Cgdi.cpp : \
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\basetsd.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\guiddef.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\propidl.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\reason.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\stralign.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\tvout.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winefs.h"\
+	"..\Common\2D\Vector2D.h"\
+	"..\Common\misc\Cgdi.h"\
+
+..\Common\iniFileLoaderBase.cpp : \
+	"..\Common\misc\iniFileLoaderBase.h"\
+	
+
+..\Common\AI\Path.cpp : \
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\basetsd.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\guiddef.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\propidl.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\reason.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\stralign.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\tvout.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winefs.h"\
+	"..\Common\2D\C2DMatrix.h"\
+	"..\Common\2D\Transformations.h"\
+	"..\Common\2D\Vector2D.h"\
+	"..\Buckland_Chapter3-Steering Behaviors\Path.h"\
+	"..\Common\misc\Cgdi.h"\
+	"..\Common\misc\utils.h"\
+	
+
+..\Common\Time\PrecisionTimer.cpp : \
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\basetsd.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\guiddef.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\propidl.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\reason.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\stralign.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\tvout.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winefs.h"\
+	"..\Common\Time\PrecisionTimer.h"\
+
+..\Common\misc\WindowUtils.cpp : \
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\basetsd.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\guiddef.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\propidl.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\reason.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\stralign.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\tvout.h"\
+	"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winefs.h"\
+	"..\Common\2D\Vector2D.h"\
+	"..\Common\misc\WindowUtils.h"\
+	"..\Common\misc\utils.h"\
