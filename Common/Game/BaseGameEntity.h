@@ -14,9 +14,9 @@
 #include <vector>
 #include <string>
 #include <iosfwd>
-#include "../2D/Vector2D.h"
-#include "../2D/Geometry.h"
-#include "../misc/utils.h"
+#include "2D/Vector2D.h"
+#include "2D/Geometry.h"
+#include "Misc/utils.h"
 
 
 
@@ -70,7 +70,7 @@ public:
 
   virtual void Update(){}; 
 
-  virtual void Render()=0;
+  virtual void Render(){};
   
   virtual bool HandleMessage(const Telegram& msg){return false;}
   

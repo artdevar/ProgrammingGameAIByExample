@@ -11,6 +11,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleSoccer", "SimpleSocce
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Pathfinder", "Pathfinder\Pathfinder.vcxproj", "{BFE9D606-0145-45E4-8AC3-A62758876EDB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WestWorld", "StateMachines\WestWorld\WestWorld.vcxproj", "{FED3357C-6033-4467-AE59-1D462167A88E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WestWorldWithMessaging", "StateMachines\WestWorldWithMessaging\WestWorldWithMessaging.vcxproj", "{674A901E-99B3-4C95-90AA-71BBEA517AAA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WestWorldWithWoman", "StateMachines\WestWorldWithWoman\WestWorldWithWoman.vcxproj", "{04EBA4D5-202E-405D-948C-ED664AC31810}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -43,6 +49,30 @@ Global
 		{BFE9D606-0145-45E4-8AC3-A62758876EDB}.Release|x64.Build.0 = Release|x64
 		{BFE9D606-0145-45E4-8AC3-A62758876EDB}.Release|x86.ActiveCfg = Release|Win32
 		{BFE9D606-0145-45E4-8AC3-A62758876EDB}.Release|x86.Build.0 = Release|Win32
+		{FED3357C-6033-4467-AE59-1D462167A88E}.Debug|x64.ActiveCfg = Debug|x64
+		{FED3357C-6033-4467-AE59-1D462167A88E}.Debug|x64.Build.0 = Debug|x64
+		{FED3357C-6033-4467-AE59-1D462167A88E}.Debug|x86.ActiveCfg = Debug|Win32
+		{FED3357C-6033-4467-AE59-1D462167A88E}.Debug|x86.Build.0 = Debug|Win32
+		{FED3357C-6033-4467-AE59-1D462167A88E}.Release|x64.ActiveCfg = Release|x64
+		{FED3357C-6033-4467-AE59-1D462167A88E}.Release|x64.Build.0 = Release|x64
+		{FED3357C-6033-4467-AE59-1D462167A88E}.Release|x86.ActiveCfg = Release|Win32
+		{FED3357C-6033-4467-AE59-1D462167A88E}.Release|x86.Build.0 = Release|Win32
+		{674A901E-99B3-4C95-90AA-71BBEA517AAA}.Debug|x64.ActiveCfg = Debug|x64
+		{674A901E-99B3-4C95-90AA-71BBEA517AAA}.Debug|x64.Build.0 = Debug|x64
+		{674A901E-99B3-4C95-90AA-71BBEA517AAA}.Debug|x86.ActiveCfg = Debug|Win32
+		{674A901E-99B3-4C95-90AA-71BBEA517AAA}.Debug|x86.Build.0 = Debug|Win32
+		{674A901E-99B3-4C95-90AA-71BBEA517AAA}.Release|x64.ActiveCfg = Release|x64
+		{674A901E-99B3-4C95-90AA-71BBEA517AAA}.Release|x64.Build.0 = Release|x64
+		{674A901E-99B3-4C95-90AA-71BBEA517AAA}.Release|x86.ActiveCfg = Release|Win32
+		{674A901E-99B3-4C95-90AA-71BBEA517AAA}.Release|x86.Build.0 = Release|Win32
+		{04EBA4D5-202E-405D-948C-ED664AC31810}.Debug|x64.ActiveCfg = Debug|x64
+		{04EBA4D5-202E-405D-948C-ED664AC31810}.Debug|x64.Build.0 = Debug|x64
+		{04EBA4D5-202E-405D-948C-ED664AC31810}.Debug|x86.ActiveCfg = Debug|Win32
+		{04EBA4D5-202E-405D-948C-ED664AC31810}.Debug|x86.Build.0 = Debug|Win32
+		{04EBA4D5-202E-405D-948C-ED664AC31810}.Release|x64.ActiveCfg = Release|x64
+		{04EBA4D5-202E-405D-948C-ED664AC31810}.Release|x64.Build.0 = Release|x64
+		{04EBA4D5-202E-405D-948C-ED664AC31810}.Release|x86.ActiveCfg = Release|Win32
+		{04EBA4D5-202E-405D-948C-ED664AC31810}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,9 +81,12 @@ Global
 		SolutionGuid = {B2350FC9-9A97-48CE-B75D-3502DFBC0DAC}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Common\Common.vcxitems*{04eba4d5-202e-405d-948c-ed664ac31810}*SharedItemsImports = 4
 		Common\Common.vcxitems*{39d33851-d61e-45f1-bb5d-8c491c5e4c78}*SharedItemsImports = 4
 		Common\Common.vcxitems*{5a80af9a-1fc7-4965-905f-51c0b0d4d7bc}*SharedItemsImports = 9
+		Common\Common.vcxitems*{674a901e-99b3-4c95-90aa-71bbea517aaa}*SharedItemsImports = 4
 		Common\Common.vcxitems*{8191fbfd-78ef-4f67-ae1b-a225d0a0f040}*SharedItemsImports = 4
 		Common\Common.vcxitems*{bfe9d606-0145-45e4-8ac3-a62758876edb}*SharedItemsImports = 4
+		Common\Common.vcxitems*{fed3357c-6033-4467-ae59-1d462167a88e}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

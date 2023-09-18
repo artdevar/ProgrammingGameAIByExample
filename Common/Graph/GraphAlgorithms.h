@@ -454,9 +454,7 @@ void Graph_SearchDijkstra<graph_type>::Search()
     typename graph_type::ConstEdgeIterator ConstEdgeItr(m_Graph, NextClosestNode);
 
     //for each edge connected to the next closest node
-    for (const Edge* pE=ConstEdgeItr.begin();
-        !ConstEdgeItr.end();
-        pE=ConstEdgeItr.next())
+    for (const Edge* pE = ConstEdgeItr.begin(); pE; pE = ConstEdgeItr.next())
     {
       //the total cost to the node this edge points to is the cost to the
       //current node plus the cost of the edge connecting them.

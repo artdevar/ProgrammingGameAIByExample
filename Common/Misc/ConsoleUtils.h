@@ -13,6 +13,8 @@
 #include <conio.h>
 #include <iostream>
 
+#pragma warning(disable : 4996)
+
 //default text colors can be found in wincon.h
 inline void SetTextColor(WORD colors)
 {

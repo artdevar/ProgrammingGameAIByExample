@@ -113,7 +113,8 @@ void Pathfinder::PaintTerrain(POINTS p)
   int y = (int)((double)(p.y)/m_dCellHeight); 
   
   //make sure the values are legal
-  if ( (x>m_iCellsX) || (y>(m_iCellsY-1)) ) return;
+  if (x >= m_iCellsX || y >= m_iCellsY)
+    return;
 
   //reset path and tree records
   m_SubTree.clear();

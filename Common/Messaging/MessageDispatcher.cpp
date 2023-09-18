@@ -45,7 +45,7 @@ void MessageDispatcher::DispatchMsg(double       delay,
                                     int          sender,
                                     int          receiver,
                                     int          msg,
-                                    void*        AdditionalInfo = NULL)
+                                    void*        AdditionalInfo = nullptr)
 {
 
   //get a pointer to the receiver
