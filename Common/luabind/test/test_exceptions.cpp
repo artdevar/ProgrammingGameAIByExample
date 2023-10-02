@@ -1,78 +1,88 @@
-#include "test.h"
+// Copyright (c) 2004 Daniel Wallin
 
-namespace
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+// ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+// SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+// ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+// OR OTHER DEALINGS IN THE SOFTWARE.
+
+#include "test.hpp"
+#include <luabind/luabind.hpp>
+
+struct ex : public std::exception, public counted_type<ex>
 {
-	struct ex: public std::exception
-	{
-		ex(const char* m): msg(m) {}
-		virtual const char* what() const throw() { return msg; }
-		const char* msg;
-	};
+    ex(const char* m): msg(m) {}
+    virtual ~ex() throw() {}
+    virtual const char* what() const throw() { return msg; }
+    const char* msg;
+};
 
-	struct exception_thrower
-	{
-		exception_thrower() {}
-		exception_thrower(int) { throw ex("exception description"); }
-		exception_thrower(int, int) { throw "a string exception"; }
-		exception_thrower(int, int, int) { throw 10; }
-		int f() { throw ex("exception from a member function"); }
-		int g() { throw "a string exception"; }
-		int h() { throw 10; }
-	};
-
-} // anonymous namespace
-
-
-bool test_exceptions()
+struct exception_thrower : counted_type<exception_thrower>
 {
-	try
-	{
-		using namespace luabind;
+    exception_thrower() {}
+    exception_thrower(int) { throw ex("exception description"); }
+    exception_thrower(int, int) { throw "a string exception"; }
+    exception_thrower(int, int, int) { throw 10; }
+    int f() { throw ex("exception from a member function"); }
+    int g() { throw "a string exception"; }
+    int h() { throw 10; }
+};
 
-		lua_State* L = lua_open();
-		lua_closer c(L);
-		int top = lua_gettop(L);
+COUNTER_GUARD(exception_thrower);
 
-		open(L);
+void test_main(lua_State* L)
+{
+    using namespace luabind;
 
-		module(L)
-		[
-			class_<exception_thrower>("exception_thrower")
-				.def(constructor<>())
-				.def(constructor<int>())
-				.def(constructor<int, int>())
-				.def(constructor<int, int, int>())
-				.def("f", &exception_thrower::f)
-				.def("g", &exception_thrower::g)
-				.def("h", &exception_thrower::h)
-		];
+#ifndef LUABIND_NO_EXCEPTIONS
 
-		if (dostring2(L, "a = exception_thrower(1)") != 1) throw 0;
-		if (std::string("exception description") != lua_tostring(L, -1)) throw 0;
-		lua_pop(L, 1);
-		if (dostring2(L, "a = exception_thrower(1,1)") != 1) throw 0;
-		if (std::string("a string exception") != lua_tostring(L, -1)) throw 0;
-		lua_pop(L, 1);
-		if (dostring2(L, "a = exception_thrower(1,1,1)") != 1) throw 0;
-		if (std::string("exception_thrower() threw an exception") != lua_tostring(L, -1)) throw 0;
-		lua_pop(L, 1);
-		if (dostring2(L, "a = exception_thrower()") != 0) throw 0;
-		if (dostring2(L, "a:f()") != 1) throw 0;
-		if (std::string("exception from a member function") != lua_tostring(L, -1)) throw 0;
-		lua_pop(L, 1);
-		if (dostring2(L, "a:g()") != 1) throw 0;
-		if (std::string("a string exception") != lua_tostring(L, -1)) throw 0;
-		lua_pop(L, 1);
-		if (dostring2(L, "a:h()") != 1) throw 0;
-		if (std::string("exception_thrower:h() threw an exception") != lua_tostring(L, -1)) throw 0;
-		lua_pop(L, 1);
+    const int start_count = ex::count;
 
-		if (top != lua_gettop(L)) return false;
-	}
-	catch(...)
-	{
-		return false;
-	}
+    module(L)
+    [
+        class_<exception_thrower>("throw")
+            .def(constructor<>())
+            .def(constructor<int>())
+            .def(constructor<int, int>())
+            .def(constructor<int, int, int>())
+            .def("f", &exception_thrower::f)
+            .def("g", &exception_thrower::g)
+            .def("h", &exception_thrower::h)
+    ];
 
-	return true;
+    DOSTRING_EXPECTED(L, "a = throw(1)", "std::exception: 'exception description'");
+    DOSTRING_EXPECTED(L, "a = throw(1,1)", "c-string: 'a string exception'");
+    DOSTRING_EXPECTED(L, "a = throw(1,1,1)", "Unknown C++ exception");
+    DOSTRING(L, "a = throw()");
+    DOSTRING_EXPECTED(L, "a:f()", "std::exception: 'exception from a member function'");
+    DOSTRING_EXPECTED(L, "a:g()", "c-string: 'a string exception'");
+
+    DOSTRING_EXPECTED(L, "a:h()", "Unknown C++ exception");
+    DOSTRING_EXPECTED(L, 
+        "obj = throw('incorrect', 'parameters', 'constructor')",
+        "No matching overload found, candidates:\n"
+        "void __init(luabind::argument const&,int,int,int)\n"
+        "void __init(luabind::argument const&,int,int)\n"
+        "void __init(luabind::argument const&,int)\n"
+        "void __init(luabind::argument const&)");
+
+    const int end_count = ex::count;
+    TEST_CHECK( start_count == end_count );
+
+#endif
 }
+

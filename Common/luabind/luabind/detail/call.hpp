@@ -1,454 +1,330 @@
-// Copyright (c) 2003 Daniel Wallin and Arvid Norberg
-
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the "Software"),
-// to deal in the Software without restriction, including without limitation
-// the rights to use, copy, modify, merge, publish, distribute, sublicense,
-// and/or sell copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following conditions:
-
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-// ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-// SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-// ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
-// OR OTHER DEALINGS IN THE SOFTWARE.
-
+// Copyright Daniel Wallin 2008. Use, modification and distribution is
+// subject to the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #if !BOOST_PP_IS_ITERATING
 
-#ifndef LUABIND_CALL_HPP_INCLUDED
-#define LUABIND_CALL_HPP_INCLUDED
+# ifndef LUABIND_CALL2_080911_HPP
+#  define LUABIND_CALL2_080911_HPP
 
-#include <boost/config.hpp>
-#include <boost/preprocessor/repeat.hpp>
-#include <boost/preprocessor/iteration/iterate.hpp>
-#include <boost/preprocessor/repetition/enum.hpp> 
-#include <boost/preprocessor/repetition/enum_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing.hpp>
-#include <boost/preprocessor/repetition/repeat.hpp>
-#include <boost/preprocessor/punctuation/comma_if.hpp>
-#include <boost/preprocessor/cat.hpp>
-#include <boost/mpl/bool.hpp>
+#  include <luabind/config.hpp>
 
-#include <luabind/config.hpp>
-#include <luabind/detail/policy.hpp>
-#include <luabind/yield_policy.hpp>
+#  ifdef LUABIND_CPP0x
+#   include <luabind/detail/call_0x.hpp>
+#  else
 
-/*
-#define LUABIND_DECL(z, n, text) typedef typename detail::get_policy<n+1,Policies>::type BOOST_PP_CAT(a##n,_policy); \
-		typedef typename BOOST_PP_CAT(a##n,_policy)::head BOOST_PP_CAT(a##n,_converter_intermediate); \
-		typedef typename BOOST_PP_CAT(a##n,_converter_intermediate)::template generate_converter<A##n, lua_to_cpp>::type BOOST_PP_CAT(p##n,_conv);
-#define LUABIND_PARAMS(z,n,text) BOOST_PP_CAT(p##n,_conv)::apply(L, LUABIND_DECORATE_TYPE(A##n), n + 2)
-*/
+#  include <boost/mpl/apply_wrap.hpp>
+#  include <boost/mpl/begin_end.hpp>
+#  include <boost/mpl/deref.hpp>
+#  include <boost/mpl/front.hpp>
+#  include <boost/mpl/long.hpp>
+#  include <boost/mpl/size.hpp>
+#  include <boost/preprocessor/control/if.hpp>
+#  include <boost/preprocessor/iteration/iterate.hpp>
+#  include <boost/preprocessor/iteration/local.hpp>
+#  include <boost/preprocessor/repetition/enum.hpp>
+#  include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#  include <boost/type_traits/is_void.hpp>
 
-#define LUABIND_DECL(z, n, text) typedef typename find_conversion_policy<n + 1, Policies>::type BOOST_PP_CAT(converter_policy,n); \
-		typename BOOST_PP_CAT(converter_policy,n)::template generate_converter<A##n, lua_to_cpp>::type BOOST_PP_CAT(c,n);
-//typedef typename BOOST_PP_CAT(converter_policy,n)::template generate_converter<A##n, lua_to_cpp>::type BOOST_PP_CAT(converter,n);
-//#define LUABIND_PARAMS(z,n,text) BOOST_PP_CAT(converter,n)::apply(L, LUABIND_DECORATE_TYPE(A##n), n + 2)
-#define LUABIND_ADD_INDEX(z,n,text) + BOOST_PP_CAT(converter_policy,n)::has_arg
-#define LUABIND_INDEX_MAP(z,n,text) 2 BOOST_PP_REPEAT(n, LUABIND_ADD_INDEX, _)
-#define LUABIND_PARAMS(z,n,text) BOOST_PP_CAT(c,n).apply(L, LUABIND_DECORATE_TYPE(A##n), LUABIND_INDEX_MAP(_,n,_))
-#define LUABIND_POSTCALL(z,n,text) BOOST_PP_CAT(c,n).converter_postcall(L, LUABIND_DECORATE_TYPE(A##n), LUABIND_INDEX_MAP(_,n,_));
+#  include <luabind/detail/policy.hpp>
+#  include <luabind/yield_policy.hpp>
 
-namespace luabind { namespace detail
+namespace luabind { namespace detail {
+
+struct invoke_context;
+
+struct LUABIND_API function_object
 {
-	template<class Policies>
-	struct maybe_yield
-	{
-		static inline int apply(lua_State* L, int nret)
-		{
-			return ret(L, nret, boost::mpl::bool_<has_yield<Policies>::value>());
-		}
-
-		static inline int ret(lua_State* L, int nret, boost::mpl::bool_<true>)
-		{
-			return lua_yield(L, nret);
-		}
-
-		static inline int ret(lua_State*, int nret, boost::mpl::bool_<false>)
-		{
-			return nret;
-		}
-	};
-	
-	template<class T>
-	struct returns
-	{
-		#define BOOST_PP_ITERATION_PARAMS_1 (4, (0, LUABIND_MAX_ARITY, <luabind/detail/call.hpp>, 1))
-		#include BOOST_PP_ITERATE()
-	};
-
-	template<>
-	struct returns<void>
-	{
-		#define BOOST_PP_ITERATION_PARAMS_1 (4, (0, LUABIND_MAX_ARITY, <luabind/detail/call.hpp>, 2))
-		#include BOOST_PP_ITERATE()
-	};
-
-	#define BOOST_PP_ITERATION_PARAMS_1 (4, (0, LUABIND_MAX_ARITY, <luabind/detail/call.hpp>, 3))
-	#include BOOST_PP_ITERATE()
-}}
-
-#undef LUABIND_DECL
-#undef LUABIND_PARAMS
-#undef LUABIND_POSTCALL
-#undef LUABIND_ADD_INDEX
-#undef LUABIND_INDEX_MAP
-
-#endif // LUABIND_CALL_HPP_INCLUDED
-
-#elif BOOST_PP_ITERATION_FLAGS() == 1
-
-	template<class C, class Policies BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	static int call(T(C::*f)(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), C* obj, lua_State* L, const Policies*)
-	{
-		int nargs = lua_gettop(L);
-
-		typedef typename find_conversion_policy<0, Policies>::type converter_policy_ret;
-		typename converter_policy_ret::template generate_converter<T, cpp_to_lua>::type converter_ret;
-
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_DECL, _)
-
-		converter_ret.apply(L, (obj->*f)
-		(
-			BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_PARAMS, _)
-		));
-
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_POSTCALL, _)
-
-		int nret = lua_gettop(L) - nargs;
-
-		const int indices[] =
-		{
-			1 		/* self */,
-			nargs + nret /* result */
-			BOOST_PP_ENUM_TRAILING(BOOST_PP_ITERATION(), LUABIND_INDEX_MAP, _)
-		};
-
-		policy_list_postcall<Policies>::apply(L, indices);
-
-		return maybe_yield<Policies>::apply(L, nret);
-//		return nret;
-	}
-
-	template<class C, class Policies BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	static int call(T(C::*f)(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)) const, C* obj, lua_State* L, const Policies*)
-	{
-		int nargs = lua_gettop(L);
-		typedef typename find_conversion_policy<0, Policies>::type converter_policy_ret;
-		typename converter_policy_ret::template generate_converter<T, cpp_to_lua>::type converter_ret;
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_DECL, _)
-		converter_ret.apply(L, (obj->*f)
-		(
-			BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_PARAMS, _)
-		));
-
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_POSTCALL, _)
-		int nret = lua_gettop(L) - nargs;
-
-		const int indices[] =
-		{
-			1 		/* self */,
-			nargs + nret /* result */
-			BOOST_PP_ENUM_TRAILING(BOOST_PP_ITERATION(), LUABIND_INDEX_MAP, _)
-		};
-
-		policy_list_postcall<Policies>::apply(L, indices);
-
-	//	return nret;
-		return maybe_yield<Policies>::apply(L, nret);
-	}
-
-	template<class C, class Policies BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	static int call(T(*f)(C* obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), C* obj, lua_State* L, const Policies*)
-	{
-		int nargs = lua_gettop(L);
-		typedef typename find_conversion_policy<0, Policies>::type converter_policy_ret;
-		typename converter_policy_ret::template generate_converter<T, cpp_to_lua>::type converter_ret;
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_DECL, _)
-		converter_ret.apply(L, f
-		(
-			obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_PARAMS, _)
-		));
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_POSTCALL, _)
-	
-		int nret = lua_gettop(L) - nargs;
-
-		const int indices[] =
-		{
-			1 		/* self */,
-			nargs + nret /* result */
-			BOOST_PP_ENUM_TRAILING(BOOST_PP_ITERATION(), LUABIND_INDEX_MAP, _)
-		};
-
-		policy_list_postcall<Policies>::apply(L, indices);
-
-	//	return nret;
-		return maybe_yield<Policies>::apply(L, nret);
-	}
-
-	template<class C, class Policies BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	static int call(T(*f)(const C* obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), C* obj, lua_State* L, const Policies*)
-	{
-		int nargs = lua_gettop(L);
-		typedef typename find_conversion_policy<0, Policies>::type converter_policy_ret;
-		typename converter_policy_ret::template generate_converter<T, cpp_to_lua>::type converter_ret;
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_DECL, _)
-		converter_ret.apply(L, f
-		(
-			*obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_PARAMS, _)
-		));
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_POSTCALL, _)
-
-		int nret = lua_gettop(L) - nargs;
-
-		const int indices[] =
-		{
-			1 		/* self */,
-			nargs + nret /* result */
-			BOOST_PP_ENUM_TRAILING(BOOST_PP_ITERATION(), LUABIND_INDEX_MAP, _)
-		};
-
-		policy_list_postcall<Policies>::apply(L, indices);
-
-	//	return nret;
-		return maybe_yield<Policies>::apply(L, nret);
-	}
-
-
-	template<class C, class Policies BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	static int call(T(*f)(C& obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), C* obj, lua_State* L, const Policies*)
-	{
-		int nargs = lua_gettop(L);
-		typedef typename find_conversion_policy<0, Policies>::type converter_policy_ret;
-		typename converter_policy_ret::template generate_converter<T, cpp_to_lua>::type converter_ret;
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_DECL, _)
-		converter_ret.apply(L, f
-		(
-			*obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_PARAMS, _)
-		));
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_POSTCALL, _)
-
-		int nret = lua_gettop(L) - nargs;
-
-		const int indices[] =
-		{
-			1 		/* self */,
-			nargs + nret /* result */
-			BOOST_PP_ENUM_TRAILING(BOOST_PP_ITERATION(), LUABIND_INDEX_MAP, _)
-		};
-
-		policy_list_postcall<Policies>::apply(L, indices);
-
-	//	return nret;
-		return maybe_yield<Policies>::apply(L, nret);
-	}
-
-	template<class C, class Policies BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	static int call(T(*f)(const C& obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), C* obj, lua_State* L, const Policies*)
-	{
-		int nargs = lua_gettop(L);
-		typedef typename find_conversion_policy<0, Policies>::type converter_policy_ret;
-		typename converter_policy_ret::template generate_converter<T, cpp_to_lua>::type converter_ret;
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_DECL, _)
-		converter_ret.apply(L, f
-		(
-			*obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_PARAMS, _)
-		));
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_POSTCALL, _)
-
-		int nret = lua_gettop(L) - nargs;
-
-		const int indices[] =
-		{
-			1 		/* self */,
-			nargs + nret /* result */
-			BOOST_PP_ENUM_TRAILING(BOOST_PP_ITERATION(), LUABIND_INDEX_MAP, _)
-		};
-
-		policy_list_postcall<Policies>::apply(L, indices);
-
-	//	return nret;
-		return maybe_yield<Policies>::apply(L, nret);
-	}
-
-#elif BOOST_PP_ITERATION_FLAGS() == 2
-
-	template<class C, class Policies BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	static int call(void(C::*f)(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), C* obj, lua_State* L, const Policies*)
-	{
-		int nargs = lua_gettop(L);
-		L = L; // L is used, but metrowerks compiler seem to warn about it before expanding the macros
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_DECL, _)
-		(obj->*f)
-		(
-			BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_PARAMS, _)
-		);
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_POSTCALL, _)
-
-		int nret = lua_gettop(L) - nargs;
-
-		const int indices[] =
-		{
-			1 		/* self */,
-			nargs + nret /* result */
-			BOOST_PP_ENUM_TRAILING(BOOST_PP_ITERATION(), LUABIND_INDEX_MAP, _)
-		};
-
-		policy_list_postcall<Policies>::apply(L, indices);
-
-	//	return nret;
-		return maybe_yield<Policies>::apply(L, nret);
-	}
-
-	template<class C, class Policies BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	static int call(void(C::*f)(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)) const, C* obj, lua_State* L, const Policies*)
-	{
-		int nargs = lua_gettop(L);
-		L = L; // L is used, but metrowerks compiler seem to warn about it before expanding the macros
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_DECL, _)
-		(obj->*f)
-		(
-			BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_PARAMS, _)
-		);
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_POSTCALL, _)
-
-		int nret = lua_gettop(L) - nargs;
-
-		const int indices[] =
-		{
-			1 		/* self */,
-			nargs + nret /* result */
-			BOOST_PP_ENUM_TRAILING(BOOST_PP_ITERATION(), LUABIND_INDEX_MAP, _)
-		};
-
-		policy_list_postcall<Policies>::apply(L, indices);
-
-	//	return nret;
-		return maybe_yield<Policies>::apply(L, nret);
-	}
-
-	template<class C, class Policies BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	static int call(void(*f)(C* obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), C* obj, lua_State* L, const Policies*)
-	{
-		int nargs = lua_gettop(L);
-		L = L; // L is used, but metrowerks compiler seem to warn about it before expanding the macros
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_DECL, _)
-		f(
-			obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_PARAMS, _)
-		);
-
-		int nret = lua_gettop(L) - nargs;
-
-		const int indices[] =
-		{
-			1 		/* self */,
-			nargs + nret /* result */
-			BOOST_PP_ENUM_TRAILING(BOOST_PP_ITERATION(), LUABIND_INDEX_MAP, _)
-		};
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_POSTCALL, _)
-
-		policy_list_postcall<Policies>::apply(L, indices);
-
-	//	return nret;
-		return maybe_yield<Policies>::apply(L, nret);
-	}
-
-	template<class C, class Policies BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	static int call(void(*f)(C& obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), C* obj, lua_State* L, const Policies*)
-	{
-		int nargs = lua_gettop(L);
-		L = L; // L is used, but metrowerks compiler seem to warn about it before expanding the macros
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_DECL, _)
-		f(
-			*obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_PARAMS, _)
-		);
-
-		int nret = lua_gettop(L) - nargs;
-
-		const int indices[] =
-		{
-			1 		/* self */,
-			nargs + nret /* result */
-			BOOST_PP_ENUM_TRAILING(BOOST_PP_ITERATION(), LUABIND_INDEX_MAP, _)
-		};
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_POSTCALL, _)
-
-		policy_list_postcall<Policies>::apply(L, indices);
-
-	//	return nret;
-		return maybe_yield<Policies>::apply(L, nret);
-	}
-
-	template<class C, class Policies BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	static int call(void(*f)(const C& obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), C* obj, lua_State* L, const Policies*)
-	{
-		int nargs = lua_gettop(L);
-		L = L; // L is used, but metrowerks compiler seem to warn about it before expanding the macros
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_DECL, _)
-		f(
-			*obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_PARAMS, _)
-		);
-		BOOST_PP_REPEAT(BOOST_PP_ITERATION(), LUABIND_POSTCALL, _)
-
-		int nret = lua_gettop(L) - nargs;
-
-		const int indices[] =
-		{
-			1 		/* self */,
-			nargs + nret /* result */
-			BOOST_PP_ENUM_TRAILING(BOOST_PP_ITERATION(), LUABIND_INDEX_MAP, _)
-		};
-
-		policy_list_postcall<Policies>::apply(L, indices);
-
-	//	return nret;
-		return maybe_yield<Policies>::apply(L, nret);
-	}
-
-#elif BOOST_PP_ITERATION_FLAGS() == 3
-
-	template<class T, class Policies, class R BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	int call(R(*f)(T& BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), T* obj, lua_State* L, const Policies* policies)
-	{
-		return returns<R>::call(f, obj, L, policies);
-	}
-
-	template<class T, class Policies, class R BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	int call(R(*f)(const T& BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), T* obj, lua_State* L, const Policies* policies)
-	{
-		return returns<R>::call(f, obj, L, policies);
-	}
-
-	template<class T, class Policies, class R BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	int call(R(*f)(T* BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), T* obj, lua_State* L, const Policies* policies)
-	{
-		return returns<R>::call(f, obj, L, policies);
-	}
-
-	template<class T, class Policies, class R BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	int call(R(*f)(const T* BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), T* obj, lua_State* L, const Policies* policies)
-	{
-		return returns<R>::call(f, obj, L, policies);
-	}
-
-	template<class T, class Policies, class R BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	int call(R(T::*f)(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)), T* obj, lua_State* L, const Policies* policies)
-	{
-		return returns<R>::call(f, obj, L, policies);
-	}
-
-	template<class T, class Policies, class R BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	int call(R(T::*f)(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), A)) const, T* obj, lua_State* L, const Policies* policies)
-	{
-		return returns<R>::call(f, obj, L, policies);
-	}
+    function_object(lua_CFunction entry)
+      : entry(entry)
+      , next(0)
+    {}
+
+    virtual ~function_object()
+    {}
+
+    virtual int call(
+        lua_State* L, invoke_context& ctx) const = 0;
+    virtual void format_signature(lua_State* L, char const* function) const = 0;
+
+    lua_CFunction entry;
+    std::string name;
+    function_object* next;
+    object keepalive;
+};
+
+struct LUABIND_API invoke_context
+{
+    invoke_context()
+      : best_score((std::numeric_limits<int>::max)())
+      , candidate_index(0)
+    {}
+
+    operator bool() const
+    {
+        return candidate_index == 1;
+    }
+
+    void format_error(lua_State* L, function_object const* overloads) const;
+
+    int best_score;
+    function_object const* candidates[10];
+    int candidate_index;
+};
+
+template <class F, class Signature, class Policies, class IsVoid>
+inline int invoke0(
+    lua_State* L, function_object const& self, invoke_context& ctx
+  , F const& f, Signature, Policies const& policies, IsVoid, mpl::true_)
+{
+    return invoke_member(
+        L, self, ctx, f, Signature(), policies
+      , mpl::long_<mpl::size<Signature>::value - 1>(), IsVoid()
+    );
+}
+
+template <class F, class Signature, class Policies, class IsVoid>
+inline int invoke0(
+    lua_State* L, function_object const& self, invoke_context& ctx,
+    F const& f, Signature, Policies const& policies, IsVoid, mpl::false_)
+{
+    return invoke_normal(
+        L, self, ctx, f, Signature(), policies
+      , mpl::long_<mpl::size<Signature>::value - 1>(), IsVoid()
+    );
+}
+
+template <class F, class Signature, class Policies>
+inline int invoke(
+    lua_State* L, function_object const& self, invoke_context& ctx
+  , F const& f, Signature, Policies const& policies)
+{
+    return invoke0(
+        L, self, ctx, f, Signature(), policies
+      , boost::is_void<typename mpl::front<Signature>::type>()
+      , boost::is_member_function_pointer<F>()
+   );
+}
+
+inline int maybe_yield_aux(lua_State*, int results, mpl::false_)
+{
+    return results;
+}
+
+inline int maybe_yield_aux(lua_State* L, int results, mpl::true_)
+{
+    return lua_yield(L, results);
+}
+
+template <class Policies>
+int maybe_yield(lua_State* L, int results, Policies*)
+{
+    return maybe_yield_aux(
+        L, results, has_policy<Policies, yield_policy>());
+}
+
+inline int sum_scores(int const* first, int const* last)
+{
+    int result = 0;
+
+    for (; first != last; ++first)
+    {
+        if (*first < 0)
+            return *first;
+        result += *first;
+    }
+
+    return result;
+}
+
+#  define LUABIND_INVOKE_NEXT_ITER(n) \
+    typename mpl::next< \
+        BOOST_PP_IF( \
+            n, BOOST_PP_CAT(iter,BOOST_PP_DEC(n)), first) \
+    >::type
+
+#  define LUABIND_INVOKE_NEXT_INDEX(n) \
+    BOOST_PP_IF( \
+        n \
+      , BOOST_PP_CAT(index,BOOST_PP_DEC(n)) + \
+            BOOST_PP_CAT(c,BOOST_PP_DEC(n)).consumed_args() \
+      , 1 \
+    )
+
+#  define LUABIND_INVOKE_COMPUTE_ARITY(n) + BOOST_PP_CAT(c,n).consumed_args()
+
+#  define LUABIND_INVOKE_DECLARE_CONVERTER(n) \
+    typedef LUABIND_INVOKE_NEXT_ITER(n) BOOST_PP_CAT(iter,n); \
+    typedef typename mpl::deref<BOOST_PP_CAT(iter,n)>::type \
+        BOOST_PP_CAT(a,n); \
+    typedef typename find_conversion_policy<n + 1, Policies>::type \
+        BOOST_PP_CAT(p,n); \
+    typename mpl::apply_wrap2< \
+        BOOST_PP_CAT(p,n), BOOST_PP_CAT(a,n), lua_to_cpp>::type BOOST_PP_CAT(c,n); \
+    int const BOOST_PP_CAT(index,n) = LUABIND_INVOKE_NEXT_INDEX(n);
+
+#  define LUABIND_INVOKE_COMPUTE_SCORE(n)                                   \
+    , BOOST_PP_CAT(c,n).match(                                              \
+        L, LUABIND_DECORATE_TYPE(BOOST_PP_CAT(a,n)), BOOST_PP_CAT(index,n))
+
+#  define LUABIND_INVOKE_ARG(z, n, base) \
+    BOOST_PP_CAT(c,base(n)).apply( \
+        L, LUABIND_DECORATE_TYPE(BOOST_PP_CAT(a,base(n))), BOOST_PP_CAT(index,base(n)))
+
+#  define LUABIND_INVOKE_CONVERTER_POSTCALL(n) \
+    BOOST_PP_CAT(c,n).converter_postcall( \
+        L, LUABIND_DECORATE_TYPE(BOOST_PP_CAT(a,n)), BOOST_PP_CAT(index,n));
+
+#  define BOOST_PP_ITERATION_PARAMS_1 \
+    (3, (0, LUABIND_MAX_ARITY, <luabind/detail/call.hpp>))
+#  include BOOST_PP_ITERATE()
+
+#  define LUABIND_INVOKE_VOID
+#  define BOOST_PP_ITERATION_PARAMS_1 \
+    (3, (0, LUABIND_MAX_ARITY, <luabind/detail/call.hpp>))
+#  include BOOST_PP_ITERATE()
+
+#  undef LUABIND_INVOKE_VOID
+#  define LUABIND_INVOKE_MEMBER
+#  define BOOST_PP_ITERATION_PARAMS_1 \
+    (3, (0, LUABIND_MAX_ARITY, <luabind/detail/call.hpp>))
+#  include BOOST_PP_ITERATE()
+
+#  define LUABIND_INVOKE_VOID
+#  define BOOST_PP_ITERATION_PARAMS_1 \
+    (3, (0, LUABIND_MAX_ARITY, <luabind/detail/call.hpp>))
+#  include BOOST_PP_ITERATE()
+
+}} // namespace luabind::detail
+
+# endif // LUABIND_CPP0x
+
+# endif // LUABIND_CALL2_080911_HPP
+
+#else // BOOST_PP_IS_ITERATING
+
+# ifdef LUABIND_INVOKE_MEMBER
+#  define N BOOST_PP_INC(BOOST_PP_ITERATION())
+# else
+#  define N BOOST_PP_ITERATION()
+# endif
+
+template <class F, class Signature, class Policies>
+inline int
+# ifdef LUABIND_INVOKE_MEMBER
+invoke_member
+# else
+invoke_normal
+# endif
+(
+    lua_State* L, function_object const& self, invoke_context& ctx
+  , F const& f, Signature, Policies const&, mpl::long_<N>
+# ifdef LUABIND_INVOKE_VOID
+  , mpl::true_
+# else
+  , mpl::false_
+# endif
+)
+{
+    typedef typename mpl::begin<Signature>::type first;
+# ifndef LUABIND_INVOKE_VOID
+    typedef typename mpl::deref<first>::type result_type;
+    typedef typename find_conversion_policy<0, Policies>::type result_policy;
+    typename mpl::apply_wrap2<
+        result_policy, result_type, cpp_to_lua>::type result_converter;
+# endif
+
+# if N > 0
+#  define BOOST_PP_LOCAL_MACRO(n) LUABIND_INVOKE_DECLARE_CONVERTER(n)
+#  define BOOST_PP_LOCAL_LIMITS (0,N-1)
+#  include BOOST_PP_LOCAL_ITERATE()
+# endif
+
+    int const arity = 0
+# if N > 0
+#  define BOOST_PP_LOCAL_MACRO(n) LUABIND_INVOKE_COMPUTE_ARITY(n)
+#  define BOOST_PP_LOCAL_LIMITS (0,N-1)
+#  include BOOST_PP_LOCAL_ITERATE()
+# endif
+    ;
+
+    int const arguments = lua_gettop(L);
+
+    int score = -1;
+
+    if (arity == arguments)
+    {
+        int const scores[] = {
+            0
+# if N > 0
+#  define BOOST_PP_LOCAL_MACRO(n) LUABIND_INVOKE_COMPUTE_SCORE(n)
+#  define BOOST_PP_LOCAL_LIMITS (0,N-1)
+#  include BOOST_PP_LOCAL_ITERATE()
+# endif
+        };
+
+        score = sum_scores(scores + 1, scores + 1 + N);
+    }
+
+    if (score >= 0 && score < ctx.best_score)
+    {
+        ctx.best_score = score;
+        ctx.candidates[0] = &self;
+        ctx.candidate_index = 1;
+    }
+    else if (score == ctx.best_score)
+    {
+        ctx.candidates[ctx.candidate_index++] = &self;
+    }
+
+    int results = 0;
+
+    if (self.next)
+    {
+        results = self.next->call(L, ctx);
+    }
+
+    if (score == ctx.best_score && ctx.candidate_index == 1)
+    {
+# ifndef LUABIND_INVOKE_VOID
+        result_converter.apply(
+            L,
+# endif
+# ifdef LUABIND_INVOKE_MEMBER
+            (c0.apply(L, LUABIND_DECORATE_TYPE(a0), index0).*f)(
+                BOOST_PP_ENUM(BOOST_PP_DEC(N), LUABIND_INVOKE_ARG, BOOST_PP_INC)
+            )
+# else
+#  define LUABIND_INVOKE_IDENTITY(x) x
+            f(
+                BOOST_PP_ENUM(N, LUABIND_INVOKE_ARG, LUABIND_INVOKE_IDENTITY)
+            )
+#  undef LUABIND_INVOKE_IDENTITY
+# endif
+# ifndef LUABIND_INVOKE_VOID
+        )
+# endif
+        ;
+
+# if N > 0
+#  define BOOST_PP_LOCAL_MACRO(n) LUABIND_INVOKE_CONVERTER_POSTCALL(n)
+#  define BOOST_PP_LOCAL_LIMITS (0,N-1)
+#  include BOOST_PP_LOCAL_ITERATE()
+# endif
+
+        results = maybe_yield(L, lua_gettop(L) - arguments, (Policies*)0);
+
+        int const indices[] = {
+            arguments + results BOOST_PP_ENUM_TRAILING_PARAMS(N, index)
+        };
+
+        policy_list_postcall<Policies>::apply(L, indices);
+    }
+
+    return results;
+}
+
+# undef N
 
 #endif
+

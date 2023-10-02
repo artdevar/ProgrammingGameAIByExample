@@ -10,10 +10,8 @@
 //          minimum value this variable can accept is *any* value less than the
 //          midpoint.
 //-----------------------------------------------------------------------------
-#include "fuzzy/FuzzySet.h"
-#include "misc/utils.h"
-
-
+#include "Fuzzy/FuzzySet.h"
+#include "Misc/utils.h"
 
 class FuzzySet_LeftShoulder : public FuzzySet
 {

@@ -34,8 +34,6 @@
 
 #if defined (BOOST_MSVC) && (BOOST_MSVC <= 1200)
 
-#define LUABIND_MSVC_TYPENAME
-
 #define for if (false) {} else for
 
 #include <cstring>
@@ -47,16 +45,19 @@ namespace std
 	using ::type_info;
 }
 
+#endif
+
+
+#if defined (BOOST_MSVC) && (BOOST_MSVC <= 1300)
+	#define LUABIND_MSVC_TYPENAME
 #else
-
-#define LUABIND_MSVC_TYPENAME typename
-
+	#define LUABIND_MSVC_TYPENAME typename
 #endif
 
 // the maximum number of arguments of functions that's
 // registered. Must at least be 2
 #ifndef LUABIND_MAX_ARITY
-	#define LUABIND_MAX_ARITY 5
+	#define LUABIND_MAX_ARITY 10
 #elif LUABIND_MAX_ARITY <= 1
 	#undef LUABIND_MAX_ARITY
 	#define LUABIND_MAX_ARITY 2
@@ -84,39 +85,11 @@ namespace std
 // exceptions will still be catched when there's
 // no error checking.
 
-// LUABIND_DONT_COPY_STRINGS
-// define this if you only pass static constant strings to
-// the def() methods. It will make luabind expect the
-// strings to exist as long as the program is running.
-// Luabind will not copy the strings in this case.
-
 // LUABIND_NOT_THREADSAFE
 // this define will make luabind non-thread safe. That is,
 // it will rely on a static variable. You can still have
 // multiple lua states and use coroutines, but only
 // one of your real threads may run lua code.
-
-// If you don't want to use the rtti supplied by C++
-// you can supply your own type-info structure with the
-// LUABIND_TYPE_INFO define. Your type-info structure
-// must be copyable and it must be able to compare itself
-// against other type-info structures. You supply the compare
-// function through the LUABIND_TYPE_INFO_EQUAL()
-// define. It should compare the two type-info structures
-// it is given and return true if they represent the same type
-// and false otherwise. You also have to supply a function
-// to generate your type-info structure. You do this through
-// the LUABIND_TYPEID() define. It takes a type as it's
-// parameter. That is, a compile time parameter. To use it
-// you probably have to make a traits class with specializations
-// for all classes that you have type-info for.
-
-#ifndef LUABIND_TYPE_INFO
-	#define LUABIND_TYPE_INFO const std::type_info*
-	#define LUABIND_TYPEID(t) &typeid(t)
-	#define LUABIND_TYPE_INFO_EQUAL(i1, i2) *i1 == *i2
-	#define LUABIND_INVALID_TYPE_INFO &typeid(detail::null_type)
-#endif
 
 // LUABIND_NO_EXCEPTIONS
 // this define will disable all usage of try, catch and throw in
@@ -126,6 +99,39 @@ namespace std
 // Luabind requires that no function called directly or indirectly
 // by luabind throws an exception (throwing exceptions through
 // C code has undefined behavior, lua is written in C).
+
+#ifdef LUABIND_DYNAMIC_LINK
+# ifdef BOOST_WINDOWS
+#  ifdef LUABIND_BUILDING
+#   define LUABIND_API __declspec(dllexport)
+#  else
+#   define LUABIND_API __declspec(dllimport)
+#  endif
+# else
+#  if defined(_GNUC_) && _GNUC_ >=4
+#   define LUABIND_API __attribute__ ((visibility("default")))
+#  endif
+# endif
+#endif
+
+#ifndef LUABIND_API
+# define LUABIND_API
+#endif
+
+#if !defined(LUABIND_CPP0x) \
+ && !defined(BOOST_NO_DECLTYPE) \
+ && !defined(BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS) \
+ && !defined(BOOST_NO_VARIADIC_TEMPLATES)
+
+# define LUABIND_CPP0x
+
+#endif
+
+namespace luabind {
+
+LUABIND_API void disable_super_deprecation();
+
+} // namespace luabind
 
 #endif // LUABIND_CONFIG_HPP_INCLUDED
 

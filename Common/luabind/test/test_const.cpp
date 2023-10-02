@@ -1,53 +1,53 @@
-#include "test.h"
+// Copyright (c) 2004 Daniel Wallin and Arvid Norberg
 
-namespace
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+// ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+// SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+// ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+// OR OTHER DEALINGS IN THE SOFTWARE.
+
+#include "test.hpp"
+#include <luabind/luabind.hpp>
+
+struct A
 {
-	LUABIND_ANONYMOUS_FIX int feedback = 0;
+    const A* f() { return this; }
 
-	struct A
-	{
-		const A* f() { return this; }
+    int g1() const { return 1; }
+    int g2() { return 2; }
+};
 
-		void g() const { feedback = 1; }
-		void g() { feedback = 2; }
-	};
-
-} // anonymous namespace
-
-bool test_const()
+void test_main(lua_State* L)
 {
-	using namespace luabind;
+    using namespace luabind;
 
-	lua_State* L = lua_open();
-	lua_closer c(L);
-	int top = lua_gettop(L);
+    module(L)
+    [
+        class_<A>("A")
+            .def(constructor<>())
+            .def("f", &A::f)
+            .def("g", &A::g1)
+            .def("g", &A::g2)
+    ];
 
-	open(L);
+    DOSTRING(L, "a = A()");
+    DOSTRING(L, "assert(a:g() == 2)");
 
-	typedef void(A::*g1_t)();
-	typedef void(A::*g2_t)() const;
-	
-	g1_t g1 = &A::g;
-	g2_t g2 = &A::g;
-
-	module(L)
-	[
-		class_<A>("A")
-			.def(constructor<>())
-			.def("f", &A::f)
-			.def("g", /*(void(A::*)() const) &A::g*/ g1)
-			.def("g", /*(void(A::*)()) &A::g*/ g2)
-	];
-
-	if (dostring(L, "a = A()")) return false;
-	if (dostring(L, "a:g()")) return false;
-	if (feedback != 2) return false;
-
-	if (dostring(L, "a2 = a:f()")) return false;
-	if (dostring(L, "a2:g()")) return false;
-	if (feedback != 1) return false;
-
-	if (top != lua_gettop(L)) return false;
-
-	return true;
+    DOSTRING(L, "a2 = a:f()");
+    DOSTRING(L, "assert(a2:g() == 1)");
 }
+

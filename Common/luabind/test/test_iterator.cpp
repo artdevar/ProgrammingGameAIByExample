@@ -1,55 +1,85 @@
-#include "test.h"
+// Copyright Daniel Wallin 2007. Use, modification and distribution is
+// subject to the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-extern "C"
-{
-	#include "lauxlib.h"
-	#include "lualib.h"
-}
+#include "test.hpp"
 
-#include <vector>
+#include <luabind/luabind.hpp>
 #include <luabind/iterator_policy.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
 
-namespace
+struct container
 {
-	LUABIND_ANONYMOUS_FIX int feedback = 0;
+    container()
+    {
+        for (int i = 0; i < 5; ++i)
+            data[i] = i + 1;
+    }
 
-	struct IteratorTest
-	{
-		IteratorTest()
-		{
-			names.push_back("first one");
-			names.push_back("foobar");
-			names.push_back("last one");
-		}
+    struct iterator
+      : boost::iterator_adaptor<iterator, int*>
+    {
+        static std::size_t alive;
 
-		std::vector<std::string> names;
-	};
-	
-} // anonymous namespace
+        iterator(int* p)
+          : iterator::iterator_adaptor_(p)
+        {
+            ++alive;
+        }
 
-bool test_iterator()
+        iterator(iterator const& other)
+          : iterator::iterator_adaptor_(other)
+        {
+            ++alive;
+        }
+
+        ~iterator()
+        {
+            --alive;
+        }
+    };
+
+    iterator begin()
+    {
+        return iterator(data);
+    }
+
+    iterator end()
+    {
+        return iterator(data + 5);
+    }
+
+    int data[5];
+};
+
+std::size_t container::iterator::alive = 0;
+
+struct cls
 {
-	using namespace luabind;
+    container iterable;
+};
 
-	lua_State* L = lua_open();
-	lua_baselibopen(L);
-	lua_closer c(L);
+void test_main(lua_State* L)
+{
+    using namespace luabind;
 
-	open(L);
+    module(L)
+    [
+        class_<cls>("cls")
+          .def(constructor<>())
+          .def_readonly("iterable", &cls::iterable, return_stl_iterator)
+    ];
 
-	module(L)
-	[
-		class_<IteratorTest>("A")
-			.def(constructor<>())
-			.def_readonly("names", &IteratorTest::names, return_stl_iterator)
-	];
+    DOSTRING(L,
+        "x = cls()\n"
+        "sum = 0\n"
+        "for i in x.iterable do\n"
+        "    sum = sum + i\n"
+        "end\n"
+        "assert(sum == 15)\n"
+        "collectgarbage('collect')\n"
+    );
 
-	dostring(L, "a = A()");
-	dostring(L, "b = ''");
-	dostring(L, "for name in a.names do b = b .. name end");
-
-	if (object_cast<std::string>(get_globals(L)["b"]) != "first onefoobarlast one") return false;
-
-	return true;
+    assert(container::iterator::alive == 0);
 }
 

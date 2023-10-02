@@ -1,159 +1,203 @@
-#pragma warning( disable: 4097 )
-#pragma warning( disable: 4096 )
+// Copyright (c) 2004 Daniel Wallin and Arvid Norberg
 
-#include "test.h"
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
 
-extern "C"
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+// ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+// SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+// ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+// OR OTHER DEALINGS IN THE SOFTWARE.
+
+#include "test.hpp"
+#include <luabind/luabind.hpp>
+
+struct A
 {
-	#include "lauxlib.h"
-	#include "lualib.h"
-}
-
-namespace
-{
-	LUABIND_ANONYMOUS_FIX int feedback = 0;
-	LUABIND_ANONYMOUS_FIX std::string str;
-
-	struct internal 
-	{
-		std::string name_;
-	};
-
-	struct property_test
-	{
-		property_test(): o(6) 
-		{
-			m_internal.name_ = "internal name";
-		}
-
-		std::string name_;
-		int a_;
-		float o;
-		internal m_internal;
-
-		void set(int a) { a_ = a; feedback = a; }
-		int get() const { feedback = a_; return a_; }
-
-		void set_name(const char* name) { name_ = name; str = name; feedback = 0; }
-		const char* get_name() const { return name_.c_str(); }
-
-		const internal& get_internal() const { return m_internal; }
-	};
-
-	int tester(lua_State* L)
-	{
-		if (!lua_isnumber(L, 1))
-		{
-			feedback = 0;
-			if (lua_isstring(L, 1))
-			{
-				str = lua_tostring(L, 1);
-			}
-		}
-		else
-		{
-			feedback = static_cast<int>(lua_tonumber(L, 1));
-		}
-		return 0;
+	int get() const 
+	{ 
+		return 5; 
 	}
-} // anonymous namespace
+};
 
-bool test_attributes()
+struct B : A
 {
-	using namespace luabind;
+};
 
-	lua_State* L = lua_open();
-	lua_baselibopen(L);
-	lua_closer c(L);
-	int top = lua_gettop(L);
+struct C
+{
+	int a;
+};
 
-	luabind::open(L);
+struct property_test : counted_type<property_test>
+{  
+    property_test(): o(6), c_ref(&c) {}
+	 ~property_test() { c.a = 0; }
 
-	lua_pushstring(L, "tester");
-	lua_pushcfunction(L, tester);
-	lua_settable(L, LUA_GLOBALSINDEX);
+    std::string str_;
+    int a_;
+    float o;
+    signed char b;
+	 C c;
+	 C* c_ref;
 
-	module(L)
-	[
-		luabind::class_<internal>("internal")
-			.def_readonly("name", &internal::name_),
-	
-		luabind::class_<property_test>("property")
+    void set(int a) { a_ = a; }
+    int get() const { return a_; }
+
+    void setA(A* a) {}
+	 A* getA() const { return 0; }
+	 
+    void set_str(const char* str) 
+    { str_ = str; }
+
+    const char* get_str() const 
+    { return str_.c_str(); }
+};
+
+COUNTER_GUARD(property_test);
+
+void free_setter(property_test& p, int a)
+{ p.set(a); }
+
+int free_getter(const property_test& p)
+{ return p.get(); }
+
+struct borrowed_attribute : counted_type<borrowed_attribute>
+{
+};
+
+struct attribute_holder : counted_type<attribute_holder>
+{
+    attribute_holder(borrowed_attribute* b)
+      : borrowed(b)
+    {}
+
+    borrowed_attribute* borrowed;
+};
+
+void test_main(lua_State* L)
+{
+    using namespace luabind;
+
+    module(L)
+    [
+		class_<property_test>("property")
 			.def(luabind::constructor<>())
 			.def("get", &property_test::get)
-			.def("get_name", &property_test::get_name)
 			.property("a", &property_test::get, &property_test::set)
-			.property("name", &property_test::get_name, &property_test::set_name)
+			.property("str", &property_test::get_str, &property_test::set_str)
+			.property("A", &property_test::getA, &property_test::setA)
 			.def_readonly("o", &property_test::o)
-//#ifndef BOOST_MSVC
-			.property("internal", &property_test::get_internal, luabind::dependency(luabind::result, luabind::self))
-//#endif
+			.property("free", &free_getter, &free_setter)
+			.def_readwrite("b", &property_test::b)
+			.def_readwrite("c", &property_test::c)
+			.def_readwrite("c_ref", &property_test::c_ref),
+
+		class_<A>("A")
+			.def(constructor<>())
+			.property("a", &A::get),
+
+		class_<B, A>("B")
+			.def(constructor<>())
+			.property("x", &A::get),
+
+		class_<C>("C")
+			.def(constructor<>())
+			.def_readwrite("a", &C::a)
 	];
 
-	if (dostring(L, "test = property()")) return false;
-	if (dostring(L, "test.a = 5")) return false;
-	if (feedback != 5) return false;
+    module(L) [
+        class_<borrowed_attribute>("borrowed_attribute")
+            .def(constructor<>()),
 
-	if (dostring(L, "test.name = 'Dew'")) return false;
-	if (dostring(L, "tester(test.name)")) return false;
-	if (feedback != 0) return false;
-	if (str != "Dew") return false;
+        class_<attribute_holder>("attribute_holder")
+            .def(constructor<borrowed_attribute*>())
+            .def_readwrite(
+                "borrowed", &attribute_holder::borrowed, no_dependency)
+    ];
 
-	if (dostring(L, "function d(x) end d(test.a)")) return false;
-	if (feedback != 5) return false;
+	DOSTRING(L, "test = property()\n");
 
-	if (dostring(L, "test.name = 'mango'")) return false;
-	if (feedback != 0) return false;
-	if (str != "mango") return false;
+	DOSTRING(L,
+		"test.a = 5\n"
+		"assert(test.a == 5)");
 
-	if (dostring(L, "tester(test.o)")) return false;
-	if (feedback != 6) return false;
+	DOSTRING(L, "assert(test.o == 6)");
 
-	luabind::object glob = luabind::get_globals(L);
+	DOSTRING(L,
+		"test.new_member = 'foo'\n"
+		"assert(test.new_member == 'foo')");
 
-	if (dostring(L, "a = 4")) return false;
-	if (glob["a"].type() != LUA_TNUMBER) return false;
-	if (dostring(L, "a = test[nil]")) return false;
-	if (glob["a"].type() != LUA_TNIL) return false;
-	if (dostring(L, "a = test[3.6]")) return false;
-	if (glob["a"].type() != LUA_TNIL) return false;
+	DOSTRING(L,
+		"property.new_member2 = 'bar'\n"
+		"assert(property.new_member2 == 'bar')");
 
-	lua_pushstring(L, "test");
-	glob["test_string"].set();
+	DOSTRING(L,
+		"b = property()\n"
+		"assert(b.new_member2 == 'bar')");
 
-	if (luabind::object_cast<std::string>(glob["test_string"]) != "test") return false;
+	DOSTRING(L,
+		"test.str = 'foobar'\n"
+		"assert(test.str == 'foobar')\n");
 
-	luabind::object t = glob["t"];
-	lua_pushnumber(L, 4);
-	t.set();
-	if (luabind::object_cast<int>(t) != 4) return false;
-	
-	glob["test_string"] = std::string("barfoo");
+    DOSTRING(L,
+        "test.free = 6\n"
+        "assert(test.free == 6)\n");
 
-//	swap overloads doesn't work on vc
-#if !defined(BOOST_MSVC) && !defined(BOOST_INTEL_CXX_VERSION)
-	std::swap(glob["test_string"], glob["a"]);
-	if (object_cast<std::string>(glob["a"]) != "barfoo") return false;
-	int type = glob["test_string"].type();
-	if (type != LUA_TNIL) return false;
+    DOSTRING(L,
+        "test.b = 3\n"
+        "assert(test.b == 3)\n");
 
-	if (glob["test_string"].type() != LUA_TNIL) return false;
-#endif
+	DOSTRING(L, "test.c.a = 1\n"
+		"assert(test.c.a == 1)\n"
+		"assert(test.c_ref.a == 1)");
 
-	if (dostring2(L, "test.o = 5") != 1) return false;
-	if (std::string("cannot set attribute 'property.o'") != lua_tostring(L, -1)) return false;
-	lua_pop(L, 1);
+	DOSTRING(L, "t1 = property()\n"
+		"c = t1.c\n"
+		"c2 = t1.c_ref\n"
+		"c.a = 1\n"
+		"t1 = nil\n"
+		"collectgarbage()\n"
+		"collectgarbage()\n"
+		"assert(c.a == 1)\n"
+		"assert(c2.a == 1)");
+	 
+	DOSTRING(L,
+		"a = B()\n");
 
-	if (dostring(L, "tester(test.name)")) return false;
-	if (feedback != 0) return false;
-	if (str != "mango") return false;
+	DOSTRING(L,
+		"assert(a.a == 5)\n");
 
-	if (top != lua_gettop(L)) return false;
+	DOSTRING(L,
+		"assert(a.x == 5)\n");
 
-	dostring(L, "a = property()");
-	dostring(L, "b = a.internal");
-	dostring(L, "a = nil");
-	dostring(L, "collectgarbage(0)");
-	dostring(L, "collectgarbage(0)");
-	return true;
+    DOSTRING(L,
+        "borrowed = borrowed_attribute()\n"
+        "holder = attribute_holder(borrowed)\n"
+    );
+
+    TEST_CHECK(borrowed_attribute::count == 1);
+    TEST_CHECK(attribute_holder::count == 1);
+
+    DOSTRING(L,
+        "holder.borrowed = borrowed\n"
+        "borrowed2 = holder.borrowed\n"
+        "holder = nil\n"
+        "collectgarbage()\n"
+    );
+
+    TEST_CHECK(borrowed_attribute::count == 1);
+    TEST_CHECK(attribute_holder::count == 0);
 }
+

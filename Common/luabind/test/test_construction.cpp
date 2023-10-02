@@ -1,75 +1,112 @@
-#include "test.h"
+// Copyright (c) 2004 Daniel Wallin and Arvid Norberg
 
-namespace
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+// ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+// SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+// ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+// OR OTHER DEALINGS IN THE SOFTWARE.
+
+#include "test.hpp"
+#include <luabind/luabind.hpp>
+
+struct A : counted_type<A>
 {
-	LUABIND_ANONYMOUS_FIX int feedback = 0;
-	LUABIND_ANONYMOUS_FIX int feedback2 = 0;
+	int test;
+	A(int a) { test = a; }
+	A(const A&) { test = 1; }
+	A() { test = 2; }
+	~A() {}
+};
 
-	struct A
-	{
-		A(int a) { feedback = a; }
-		A(const A&) { feedback = 21; }
-		A() { feedback = 20; }
-		~A() { feedback = -1; }
+void f(A*, const A&) {}
 
-	};
+struct B: A, counted_type<B>
+{
+	int test2;
+	B(int a):A(a) { test2 = a; }
+	B() { test2 = 3; }
+	~B() {}
+};
 
-	void f(A*, const A&) {}
+struct C : counted_type<C> {};
 
-	struct B: public A
-	{
-		B(int a):A(a) { feedback2 = a; }
-		B() { feedback2 = 20; }
-		~B() { feedback2 = -1; }
-	};
+struct base1 : counted_type<base1>
+{
+	virtual void doSomething() = 0;
+	virtual ~base1() {}
+};
 
-} // anonymous namespace
+struct deriv_1 : base1, counted_type<deriv_1>
+{
+	void doSomething() {}
+};
 
-bool test_construction()
+struct deriv_2 : deriv_1, counted_type<deriv_2>
+{
+	void doMore() {}
+};
+
+COUNTER_GUARD(A);
+COUNTER_GUARD(B);
+COUNTER_GUARD(C);
+COUNTER_GUARD(base1);
+COUNTER_GUARD(deriv_1);
+COUNTER_GUARD(deriv_2);
+
+void test_main(lua_State* L)
 {
 	using namespace luabind;
-
-	lua_State* L = lua_open();
-	lua_closer c(L);
-	int top = lua_gettop(L);
-
-	open(L);
 
 	module(L)
 	[
 		class_<A>("A")
 			.def("f", &f)
+			.def_readonly("test", &A::test)
 			.def(constructor<int>())
 			.def(constructor<const A&>())
 			.def(constructor<>()),
 
-		class_<B>("B")
+		class_<B, A>("B")
 			.def(constructor<int>())
 			.def(constructor<>())
+			.def_readonly("test2", &B::test2),
+
+		class_<C>("C")
+
 	];
 
+	DOSTRING_EXPECTED(L, "a = C()", "attempt to call a nil value");
 
-	if (dostring(L, "a = A(4)")) return false;
-	if (feedback != 4) return false;
+	DOSTRING(L,
+		"a = A(4)\n"
+		"assert(a.test == 4)");
 
-	if (dostring(L, "a2 = A(a)")) return false;
-	if (feedback != 21) return false;
+	DOSTRING(L,
+		"a2 = A(a)\n"
+		"assert(a2.test == 1)");
 
-	if (dostring(L, "b = B(6)")) return false;
-	if (feedback != 6) return false;
-	if (feedback2 != 6) return false;
+	DOSTRING(L,
+		"b = B(6)\n"
+		"assert(b.test2 == 6)\n");
+	DOSTRING(L, "assert(b.test == 6)");
 
-	if (dostring(L, "b2 = B()")) return false;
-	if (feedback != 20) return false;
-	if (feedback2 != 20) return false;
-
-//	if (dostring(L, "a:f(a)")) return false;
-
-	if (top != lua_gettop(L)) return false;
-
-	c.release();
-	if (feedback != -1) return false;
-	if (feedback2 != -1) return false;
-
-	return true;
+	DOSTRING(L,
+		"b2 = B()\n"
+		"assert(b2.test2 == 3)\n");
+	DOSTRING(L, "assert(b2.test == 2)");
 }
+

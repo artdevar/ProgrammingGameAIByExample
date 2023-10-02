@@ -25,9 +25,9 @@ class BaseGameEntity;
 #define Dispatcher MessageDispatcher::Instance()
 
 //to make code easier to read
-inline const double SEND_MSG_IMMEDIATELY = 0.0;
-inline const int    SENDER_ID_IRRELEVANT = -1;
-inline       void * NO_ADDITIONAL_INFO   = nullptr;
+extern const double SEND_MSG_IMMEDIATELY;
+extern const int    SENDER_ID_IRRELEVANT;
+extern       void * NO_ADDITIONAL_INFO;
 
 
 class MessageDispatcher

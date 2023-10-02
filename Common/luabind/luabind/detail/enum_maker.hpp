@@ -52,9 +52,6 @@ namespace luabind
 			, val_(v)
 		{}
 
-		// TODO: this doesn't really need to be a std::string, right? It could maintain the pointer
-		// until it's registered as a static data member
-//		std::string name_;
 		const char* name_;
 		int val_;
 
@@ -115,6 +112,10 @@ namespace luabind
 			}
 
 			From& from_;
+
+		private:
+            void operator=(enum_maker const&); // C4512, assignment operator could not be generated
+			template<class T> void operator,(T const&) const;
 		};
 	}
 }

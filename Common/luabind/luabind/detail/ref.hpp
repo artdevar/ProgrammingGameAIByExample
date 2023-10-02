@@ -24,58 +24,87 @@
 #ifndef LUABIND_REF_HPP_INCLUDED
 #define LUABIND_REF_HPP_INCLUDED
 
-#include <luabind/config.hpp>
+#include <cassert>
+#include <algorithm>
 
-namespace luabind { namespace detail
+#include <luabind/config.hpp>
+#include <luabind/lua_include.hpp>
+
+namespace luabind
 {
 
-	// based on luaL_ref from lauxlib.c in lua distribution
-	inline int ref(lua_State *L)
+namespace detail
+{
+
+	struct lua_reference
 	{
-		int ref;
-		if (lua_isnil(L, -1))
+		lua_reference(lua_State* L_ = 0)
+			: L(L_)
+			, m_ref(LUA_NOREF)
+		{}
+		lua_reference(lua_reference const& r)
+			: L(r.L)
+			, m_ref(LUA_NOREF)
 		{
-			lua_pop(L, 1);  /* remove from stack */
-			return LUA_REFNIL;  /* `nil' has a unique fixed reference */
+			if (!r.is_valid()) return;
+			r.get(L);
+			set(L);
 		}
+		~lua_reference() { reset(); }
 
-		lua_rawgeti(L, LUA_REGISTRYINDEX, 0);  /* get first free element */
-		ref = (int)lua_tonumber(L, -1);  /* ref = t[0] */
-		lua_pop(L, 1);  /* remove it from stack */
-		if (ref != 0)
-		{  /* any free element? */
-			lua_rawgeti(L, LUA_REGISTRYINDEX, ref);  /* remove it from list */
-			lua_rawseti(L, LUA_REGISTRYINDEX, 0);  /* (that is, t[0] = t[ref]) */
-		}
-		else
-		{  /* no free elements */
-			lua_pushliteral(L, "n");
-			lua_pushvalue(L, -1);
-			lua_rawget(L, LUA_REGISTRYINDEX);  /* get t.n */
-			ref = (int)lua_tonumber(L, -1) + 1;  /* ref = t.n + 1 */
-			lua_pop(L, 1);  /* pop t.n */
-			lua_pushnumber(L, ref);
-			lua_rawset(L, LUA_REGISTRYINDEX);  /* t.n = t.n + 1 */
-		}
-		lua_rawseti(L, LUA_REGISTRYINDEX, ref);
-		return ref;
-	}
+		lua_State* state() const { return L; }
 
-	inline void unref(lua_State *L, int ref)
-	{
-		if (ref >= 0)
+		void operator=(lua_reference const& r)
 		{
-			lua_rawgeti(L, LUA_REGISTRYINDEX, 0);
-			lua_rawseti(L, LUA_REGISTRYINDEX, ref);  /* t[ref] = t[0] */
-			lua_pushnumber(L, ref);
-			lua_rawseti(L, LUA_REGISTRYINDEX, 0);  /* t[0] = ref */
+			// TODO: self assignment problems
+			reset();
+			if (!r.is_valid()) return;
+			r.get(r.state());
+			set(r.state());
 		}
-	}
 
-	inline void getref(lua_State* L, int r)
-	{
-		lua_rawgeti(L, LUA_REGISTRYINDEX, r);
-	}
+		bool is_valid() const
+		{ return m_ref != LUA_NOREF; }
+
+		void set(lua_State* L_)
+		{
+			reset();
+			L = L_;
+			m_ref = luaL_ref(L, LUA_REGISTRYINDEX);
+		}
+
+		void replace(lua_State* L_)
+		{
+			lua_rawseti(L_, LUA_REGISTRYINDEX, m_ref);
+		}
+
+		// L may not be the same pointer as
+		// was used when creating this reference
+		// since it may be a thread that shares
+		// the same globals table.
+		void get(lua_State* L_) const
+		{
+			assert(m_ref != LUA_NOREF);
+			assert(L_);
+			lua_rawgeti(L_, LUA_REGISTRYINDEX, m_ref);
+		}
+
+		void reset()
+		{
+			if (L && m_ref != LUA_NOREF) luaL_unref(L, LUA_REGISTRYINDEX, m_ref);
+			m_ref = LUA_NOREF;
+		}
+
+		void swap(lua_reference& r)
+		{
+			assert(r.L == L);
+			std::swap(r.m_ref, m_ref);
+		}
+
+	private:
+		lua_State* L;
+		int m_ref;
+	};
 
 }}
 

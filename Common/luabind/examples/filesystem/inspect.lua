@@ -1,4 +1,3 @@
-
 -- base class for all inspectors
 -- every derived class must implement inspect()
 

@@ -31,22 +31,23 @@
 #include <boost/mpl/if.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/mpl/or.hpp>
-#include <boost/preprocessor/repeat.hpp>
-#include <boost/preprocessor/iteration/iterate.hpp>
-#include <boost/preprocessor/repetition/enum.hpp> 
-#include <boost/preprocessor/repetition/enum_params.hpp>
-#include <boost/preprocessor/repetition/enum_binary_params.hpp>
-#include <boost/preprocessor/punctuation/comma_if.hpp>
+#ifndef LUABIND_CPP0x
+# include <boost/preprocessor/repeat.hpp>
+# include <boost/preprocessor/iteration/iterate.hpp>
+# include <boost/preprocessor/repetition/enum.hpp>
+# include <boost/preprocessor/repetition/enum_params.hpp>
+# include <boost/preprocessor/repetition/enum_binary_params.hpp>
+# include <boost/preprocessor/punctuation/comma_if.hpp>
+#endif
 
+#include <luabind/error.hpp>
 #include <luabind/detail/convert_to_lua.hpp>
-#include <luabind/detail/error.hpp>
+#include <luabind/detail/pcall.hpp>
 
 namespace luabind
 {
 	namespace detail
 	{
-
-
 
 		// if the proxy_function_caller returns non-void
 			template<class Ret, class Tuple>
@@ -55,9 +56,16 @@ namespace luabind
 //			friend class luabind::object;
 			public:
 
-				proxy_function_caller(lua_State* L, const char* name, const Tuple args)
+				typedef int(*function_t)(lua_State*, int, int);
+
+				proxy_function_caller(
+					lua_State* L
+					, int params
+					, function_t fun
+					, const Tuple args)
 					: m_state(L)
-					, m_fun_name(name)
+					, m_params(params)
+					, m_fun(fun)
 					, m_args(args)
 					, m_called(false)
 				{
@@ -65,7 +73,8 @@ namespace luabind
 
 				proxy_function_caller(const proxy_function_caller& rhs)
 					: m_state(rhs.m_state)
-					, m_fun_name(rhs.m_fun_name)
+					, m_params(rhs.m_params)
+					, m_fun(rhs.m_fun)
 					, m_args(rhs.m_args)
 					, m_called(rhs.m_called)
 				{
@@ -77,19 +86,22 @@ namespace luabind
 					if (m_called) return;
 
 					m_called = true;
-					lua_State* L = m_state;;
+					lua_State* L = m_state;
 
-					// get the function
-					lua_pushstring(L, m_fun_name);
-					lua_gettable(L, LUA_GLOBALSINDEX);
+					int top = lua_gettop(L);
 
 					push_args_from_tuple<1>::apply(L, m_args);
-					if (lua_pcall(L, boost::tuples::length<Tuple>::value, 0, 0))
-					{ 
+# ifdef LUABIND_CPP0x
+                    if (m_fun(L, std::tuple_size<Tuple>::value, 0))
+# else
+					if (m_fun(L, boost::tuples::length<Tuple>::value, 0))
+# endif
+					{
+						assert(lua_gettop(L) == top - m_params + 1);
 #ifndef LUABIND_NO_EXCEPTIONS
 						throw luabind::error(L);
 #else
-						error_callback_fun e = detail::error_callback::get().err;
+						error_callback_fun e = get_error_callback();
 						if (e) e(L);
 
 						assert(0 && "the lua function threw an error and exceptions are disabled."
@@ -98,27 +110,32 @@ namespace luabind
 
 #endif
 					}
+
+					// pops the return values from the function call
+					stack_pop pop(L, lua_gettop(L) - top + m_params);
 				}
 
 				operator Ret()
 				{
-					typename default_policy::template generate_converter<Ret, lua_to_cpp>::type converter;
+					typename mpl::apply_wrap2<default_policy,Ret,lua_to_cpp>::type converter;
 
 					m_called = true;
-					lua_State* L = m_state;;
-					detail::stack_pop p(L, 1); // pop the return value
+					lua_State* L = m_state;
 
-					// get the function
-					lua_pushstring(L, m_fun_name);
-					lua_gettable(L, LUA_GLOBALSINDEX);
+					int top = lua_gettop(L);
 
 					push_args_from_tuple<1>::apply(L, m_args);
-					if (lua_pcall(L, boost::tuples::length<Tuple>::value, 1, 0))
-					{ 
+# ifdef LUABIND_CPP0x
+                    if (m_fun(L, std::tuple_size<Tuple>::value, 1))
+# else
+					if (m_fun(L, boost::tuples::length<Tuple>::value, 1))
+# endif
+					{
+						assert(lua_gettop(L) == top - m_params + 1);
 #ifndef LUABIND_NO_EXCEPTIONS
 						throw luabind::error(L); 
 #else
-						error_callback_fun e = detail::error_callback::get().err;
+						error_callback_fun e = get_error_callback();
 						if (e) e(L);
 	
 						assert(0 && "the lua function threw an error and exceptions are disabled."
@@ -127,23 +144,22 @@ namespace luabind
 #endif
 					}
 
-#ifndef LUABIND_NO_ERROR_CHECKING
+					// pops the return values from the function call
+					stack_pop pop(L, lua_gettop(L) - top + m_params);
 
 					if (converter.match(L, LUABIND_DECORATE_TYPE(Ret), -1) < 0)
 					{
 #ifndef LUABIND_NO_EXCEPTIONS
-						throw cast_failed(L, LUABIND_TYPEID(Ret));
+						throw cast_failed(L, typeid(Ret));
 #else
-						cast_failed_callback_fun e = detail::error_callback::get().cast;
-						if (e) e(L, LUABIND_TYPEID(Ret));
+						cast_failed_callback_fun e = get_cast_failed_callback();
+						if (e) e(L, typeid(Ret));
 
 						assert(0 && "the lua function's return value could not be converted."
 									" If you want to handle the error you can use luabind::set_error_callback()");
 						std::terminate();
-
 #endif
 					}
-#endif
 					return converter.apply(L, LUABIND_DECORATE_TYPE(Ret), -1);
 				}
 
@@ -151,23 +167,25 @@ namespace luabind
 				Ret operator[](const Policies& p)
 				{
 					typedef typename detail::find_conversion_policy<0, Policies>::type converter_policy;
-					typename converter_policy::template generate_converter<Ret, lua_to_cpp>::type converter;
+					typename mpl::apply_wrap2<converter_policy,Ret,lua_to_cpp>::type converter;
 
 					m_called = true;
-					lua_State* L = m_state;;
-					detail::stack_pop popper(L, 1); // pop the return value
+					lua_State* L = m_state;
 
-					// get the function
-					lua_pushstring(L, m_fun_name);
-					lua_gettable(L, LUA_GLOBALSINDEX);
+					int top = lua_gettop(L);
 
 					detail::push_args_from_tuple<1>::apply(L, m_args, p);
-					if (lua_pcall(L, boost::tuples::length<Tuple>::value, 1, 0))
+# ifdef LUABIND_CPP0x
+                    if (m_fun(L, std::tuple_size<Tuple>::value, 1))
+# else
+					if (m_fun(L, boost::tuples::length<Tuple>::value, 1))
+# endif
 					{ 
+						assert(lua_gettop(L) == top - m_params + 1);
 #ifndef LUABIND_NO_EXCEPTIONS
 						throw error(L);
 #else
-						error_callback_fun e = detail::error_callback::get().err;
+						error_callback_fun e = get_error_callback();
 						if (e) e(L);
 	
 						assert(0 && "the lua function threw an error and exceptions are disabled."
@@ -176,15 +194,16 @@ namespace luabind
 #endif
 					}
 
-#ifndef LUABIND_NO_ERROR_CHECKING
+					// pops the return values from the function call
+					stack_pop pop(L, lua_gettop(L) - top + m_params);
 
 					if (converter.match(L, LUABIND_DECORATE_TYPE(Ret), -1) < 0)
 					{
 #ifndef LUABIND_NO_EXCEPTIONS
-						throw cast_failed(L, LUABIND_TYPEID(Ret));
+						throw cast_failed(L, typeid(Ret));
 #else
-						cast_failed_callback_fun e = detail::error_callback::get().cast;
-						if (e) e(L, LUABIND_TYPEID(Ret));
+						cast_failed_callback_fun e = get_cast_failed_callback();
+						if (e) e(L, typeid(Ret));
 
 						assert(0 && "the lua function's return value could not be converted."
 									" If you want to handle the error you can use luabind::set_error_callback()");
@@ -192,14 +211,15 @@ namespace luabind
 
 #endif
 					}
-#endif
+
 					return converter.apply(L, LUABIND_DECORATE_TYPE(Ret), -1);
 				}
 
 			private:
 
 				lua_State* m_state;
-				const char* m_fun_name;
+				int m_params;
+				function_t m_fun;
 				Tuple m_args;
 				mutable bool m_called;
 
@@ -209,12 +229,18 @@ namespace luabind
 			template<class Tuple>
 			class proxy_function_void_caller
 			{
-			friend class luabind::object;
 			public:
 
-				proxy_function_void_caller(lua_State* L, const char* name, const Tuple args)
+				typedef int(*function_t)(lua_State*, int, int);
+
+				proxy_function_void_caller(
+					lua_State* L
+					, int params
+					, function_t fun
+					, const Tuple args)
 					: m_state(L)
-					, m_fun_name(name)
+					, m_params(params)
+					, m_fun(fun)
 					, m_args(args)
 					, m_called(false)
 				{
@@ -222,7 +248,8 @@ namespace luabind
 
 				proxy_function_void_caller(const proxy_function_void_caller& rhs)
 					: m_state(rhs.m_state)
-					, m_fun_name(rhs.m_fun_name)
+					, m_params(rhs.m_params)
+					, m_fun(rhs.m_fun)
 					, m_args(rhs.m_args)
 					, m_called(rhs.m_called)
 				{
@@ -234,19 +261,22 @@ namespace luabind
 					if (m_called) return;
 
 					m_called = true;
-					lua_State* L = m_state;;
+					lua_State* L = m_state;
 
-					// get the function
-					lua_pushstring(L, m_fun_name);
-					lua_gettable(L, LUA_GLOBALSINDEX);
+					int top = lua_gettop(L);
 
 					push_args_from_tuple<1>::apply(L, m_args);
-					if (lua_pcall(L, boost::tuples::length<Tuple>::value, 0, 0))
-					{ 
+# ifdef LUABIND_CPP0x
+                    if (m_fun(L, std::tuple_size<Tuple>::value, 0))
+# else
+					if (m_fun(L, boost::tuples::length<Tuple>::value, 0))
+# endif
+					{
+						assert(lua_gettop(L) == top - m_params + 1);
 #ifndef LUABIND_NO_EXCEPTIONS
 						throw luabind::error(L);
 #else
-						error_callback_fun e = detail::error_callback::get().err;
+						error_callback_fun e = get_error_callback();
 						if (e) e(L);
 	
 						assert(0 && "the lua function threw an error and exceptions are disabled."
@@ -254,25 +284,30 @@ namespace luabind
 						std::terminate();
 #endif
 					}
+					// pops the return values from the function call
+					stack_pop pop(L, lua_gettop(L) - top + m_params);
 				}
 
 				template<class Policies>
 				void operator[](const Policies& p)
 				{
 					m_called = true;
-					lua_State* L = m_state;;
+					lua_State* L = m_state;
 
-					// get the function
-					lua_pushstring(L, m_fun_name);
-					lua_gettable(L, LUA_GLOBALSINDEX);
+					int top = lua_gettop(L);
 
 					detail::push_args_from_tuple<1>::apply(L, m_args, p);
-					if (lua_pcall(L, boost::tuples::length<Tuple>::value, 0, 0))
-					{ 
+# ifdef LUABIND_CPP0x
+                    if (m_fun(L, std::tuple_size<Tuple>::value, 0))
+# else
+					if (m_fun(L, boost::tuples::length<Tuple>::value, 0))
+# endif
+					{
+						assert(lua_gettop(L) == top - m_params + 1);
 #ifndef LUABIND_NO_EXCEPTIONS
 						throw error(L);
 #else
-						error_callback_fun e = detail::error_callback::get().err;
+						error_callback_fun e = get_error_callback();
 						if (e) e(L);
 	
 						assert(0 && "the lua function threw an error and exceptions are disabled."
@@ -280,12 +315,15 @@ namespace luabind
 						std::terminate();
 #endif
 					}
+					// pops the return values from the function call
+					stack_pop pop(L, lua_gettop(L) - top + m_params);
 				}
 
 			private:
 
 				lua_State* m_state;
-				const char* m_fun_name;
+				int m_params;
+				function_t m_fun;
 				Tuple m_args;
 				mutable bool m_called;
 
@@ -293,8 +331,89 @@ namespace luabind
 
 	}
 
+# ifdef LUABIND_CPP0x
+
+
+namespace detail
+{
+
+  template <class R, class... Args>
+  struct make_proxy
+  {
+      typedef proxy_function_caller<R, std::tuple<Args const*...> > type;
+  };
+
+  template <class... Args>
+  struct make_proxy<void, Args...>
+  {
+      typedef proxy_function_void_caller<std::tuple<Args const*...> > type;
+  };
+
+} // namespace detail
+
+template <class R, class... Args>
+typename detail::make_proxy<R, Args...>::type call_function(
+    lua_State* L, char const* name, Args const&... args)
+{
+    assert(name && "luabind::call_function() expects a function name");
+
+    lua_pushstring(L, name);
+    lua_gettable(L, LUA_GLOBALSINDEX);
+
+    typedef typename detail::make_proxy<R, Args...>::type proxy_type;
+    return proxy_type(L, 1, &detail::pcall, std::tuple<Args const*...>(&args...));
+}
+
+template <class R, class... Args>
+typename detail::make_proxy<R, Args...>::type call_function(
+    object const& obj, Args const&... args)
+{
+    obj.push(obj.interpreter());
+
+    typedef typename detail::make_proxy<R, Args...>::type proxy_type;
+    return proxy_type(
+        obj.interpreter(), 1, &detail::pcall, std::tuple<Args const*...>(&args...));
+}
+
+template <class R, class... Args>
+typename detail::make_proxy<R, Args...>::type resume_function(
+    lua_State* L, char const* name, Args const&... args)
+{
+    assert(name && "luabind::call_function() expects a function name");
+
+    lua_pushstring(L, name);
+    lua_gettable(L, LUA_GLOBALSINDEX);
+
+    typedef typename detail::make_proxy<R, Args...>::type proxy_type;
+    return proxy_type(L, 1, &detail::resume_impl, std::tuple<Args const*...>(&args...));
+}
+
+template <class R, class... Args>
+typename detail::make_proxy<R, Args...>::type resume_function(
+    object const& obj, Args const&... args)
+{
+    obj.push(obj.interpreter());
+
+    typedef typename detail::make_proxy<R, Args...>::type proxy_type;
+    return proxy_type(
+        obj.interpreter(), 1, &detail::resume_impl, std::tuple<Args const*...>(&args...));
+}
+
+template <class R, class... Args>
+typename detail::make_proxy<R, Args...>::type resume(
+    lua_State* L, Args const&... args)
+{
+    typedef typename detail::make_proxy<R, Args...>::type proxy_type;
+    return proxy_type(
+        L, 0, &detail::resume_impl, std::tuple<Args const*...>(&args...));
+}
+
+# else // LUABIND_CPP0x
+
 	#define BOOST_PP_ITERATION_PARAMS_1 (4, (0, LUABIND_MAX_ARITY, <luabind/detail/call_function.hpp>, 1))
 	#include BOOST_PP_ITERATE()
+
+# endif // LUABIND_CPP0x
 
 }
 
@@ -312,6 +431,7 @@ namespace luabind
 			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type
 	call_function(lua_State* L, const char* name BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_OPERATOR_PARAMS, _) )
 	{
+		assert(name && "luabind::call_function() expects a function name");
 		typedef boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> tuple_t;
 #if BOOST_PP_ITERATION() == 0
 		tuple_t args;
@@ -321,9 +441,95 @@ namespace luabind
 		typedef typename boost::mpl::if_<boost::is_void<Ret>
 			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
 			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type proxy_type;
-		
-		return proxy_type(L, name, args);
+
+		lua_pushstring(L, name);
+		lua_gettable(L, LUA_GLOBALSINDEX);
+
+		return proxy_type(L, 1, &detail::pcall, args);
 	}
+
+	template<class Ret BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
+	typename boost::mpl::if_<boost::is_void<Ret>
+			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
+			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type
+	call_function(luabind::object const& obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_OPERATOR_PARAMS, _) )
+	{
+		typedef boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> tuple_t;
+#if BOOST_PP_ITERATION() == 0
+		tuple_t args;
+#else
+		tuple_t args(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), &a));
+#endif
+		typedef typename boost::mpl::if_<boost::is_void<Ret>
+			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
+			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type proxy_type;
+
+		obj.push(obj.interpreter());
+		return proxy_type(obj.interpreter(), 1, &detail::pcall, args);
+	}
+
+	template<class Ret BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
+	typename boost::mpl::if_<boost::is_void<Ret>
+			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
+			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type
+	resume_function(lua_State* L, const char* name BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_OPERATOR_PARAMS, _) )
+	{
+		assert(name && "luabind::resume_function() expects a function name");
+		typedef boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> tuple_t;
+#if BOOST_PP_ITERATION() == 0
+		tuple_t args;
+#else
+		tuple_t args(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), &a));
+#endif
+		typedef typename boost::mpl::if_<boost::is_void<Ret>
+			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
+			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type proxy_type;
+
+		lua_pushstring(L, name);
+		lua_gettable(L, LUA_GLOBALSINDEX);
+
+		return proxy_type(L, 1, &detail::resume_impl, args);
+	}
+
+	template<class Ret BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
+	typename boost::mpl::if_<boost::is_void<Ret>
+			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
+			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type
+	resume_function(luabind::object const& obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_OPERATOR_PARAMS, _) )
+	{
+		typedef boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> tuple_t;
+#if BOOST_PP_ITERATION() == 0
+		tuple_t args;
+#else
+		tuple_t args(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), &a));
+#endif
+		typedef typename boost::mpl::if_<boost::is_void<Ret>
+			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
+			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type proxy_type;
+
+		obj.push(obj.interpreter());
+		return proxy_type(obj.interpreter(), 1, &detail::resume_impl, args);
+	}
+
+	template<class Ret BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
+	typename boost::mpl::if_<boost::is_void<Ret>
+			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
+			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type
+	resume(lua_State* L BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_OPERATOR_PARAMS, _) )
+	{
+		typedef boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> tuple_t;
+#if BOOST_PP_ITERATION() == 0
+		tuple_t args;
+#else
+		tuple_t args(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), &a));
+#endif
+		typedef typename boost::mpl::if_<boost::is_void<Ret>
+			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
+			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type proxy_type;
+
+		return proxy_type(L, 0, &detail::resume_impl, args);
+	}
+
 
 #undef LUABIND_OPERATOR_PARAMS
 #undef LUABIND_TUPLE_PARAMS

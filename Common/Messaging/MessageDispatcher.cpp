@@ -4,6 +4,11 @@
 #include "game/EntityManager.h"
 #include "Debug/DebugConsole.h"
 
+const double SEND_MSG_IMMEDIATELY = 0.0;
+const int    SENDER_ID_IRRELEVANT = -1; 
+      void * NO_ADDITIONAL_INFO   = nullptr;
+
+
 using std::set;
 
 //uncomment below to send message info to the debug window
@@ -45,7 +50,7 @@ void MessageDispatcher::DispatchMsg(double       delay,
                                     int          sender,
                                     int          receiver,
                                     int          msg,
-                                    void*        AdditionalInfo = nullptr)
+                                    void*        AdditionalInfo = NO_ADDITIONAL_INFO)
 {
 
   //get a pointer to the receiver

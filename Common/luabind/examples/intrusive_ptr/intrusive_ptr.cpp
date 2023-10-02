@@ -91,14 +91,14 @@ namespace luabind
 		int match_lua_to_cpp(lua_State* L, by_value<boost::intrusive_ptr<T> >, int index)
 		{
 			typedef typename detail::default_policy::template generate_converter<T*, detail::lua_to_cpp>::type converter_t;
-			converter_t::match(L, LUABIND_DECORATE_TYPE(T*), index);
+			return converter_t::match(L, LUABIND_DECORATE_TYPE(T*), index);
 		}
 
 		template<class T>
 		int match_lua_to_cpp(lua_State* L, by_const_reference<boost::intrusive_ptr<T> >, int index)
 		{
 			typedef typename detail::default_policy::template generate_converter<T*, detail::lua_to_cpp>::type converter_t;
-			converter_t::match(L, LUABIND_DECORATE_TYPE(T*), index);
+			return converter_t::match(L, LUABIND_DECORATE_TYPE(T*), index);
 		}
 
 	}
@@ -147,11 +147,14 @@ int main()
 	
 	using namespace luabind;
 
-	class_<A>(L, "A")
-		.def_readonly("cnt", &A::cnt);
+	module(L)
+	[
+		class_<A>("A")
+			.def_readonly("cnt", &A::cnt),
 
-	luabind::function(L, "factory", &factory);
-	luabind::function(L, "f", &f);
+		def("factory", &factory),
+		def("f", &f)
+	];
 
 	dostring(L, "a = factory()");
 	dostring(L, "print('lua count: ' .. a.cnt)");

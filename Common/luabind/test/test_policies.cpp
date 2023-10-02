@@ -1,133 +1,227 @@
-#include "test.h"
+// Copyright (c) 2003 Daniel Wallin and Arvid Norberg
+
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+// ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+// SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+// ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+// OR OTHER DEALINGS IN THE SOFTWARE.
+
+#include "test.hpp"
 
 #include <luabind/out_value_policy.hpp>
 #include <luabind/return_reference_to_policy.hpp>
 #include <luabind/copy_policy.hpp>
+#include <luabind/adopt_policy.hpp>
+#include <luabind/discard_result_policy.hpp>
+#include <luabind/dependency_policy.hpp>
+#include <luabind/luabind.hpp>
 
-namespace
+struct test_copy {};
+
+
+struct secret_type {};
+
+secret_type sec_;
+
+
+struct policies_test_class
 {
+	policies_test_class(const char* name): name_(name)
+	{ ++count; }
+	policies_test_class() { ++count; }
+	~policies_test_class()
+	{ --count; }
 
-	LUABIND_ANONYMOUS_FIX int feedback = 0;
+	std::string name_;
 
-	struct policies_test_class
+	policies_test_class* make(const char* name) const
 	{
-		std::string name_;
+		return new policies_test_class(name);
+	}
 
-		policies_test_class() { feedback++; }
-		policies_test_class(const char* name): name_(name) { feedback++; }
-		~policies_test_class() { feedback--; }
+	void f(policies_test_class* p)
+	{
+		delete p;
+	}
+	const policies_test_class* internal_ref() { return this; }
+	policies_test_class* self_ref()
+	{ return this; }
 
-		policies_test_class* make(const char* name) const
-		{
-			return new policies_test_class(name);
-		}
+	static int count;
 
-		void f(policies_test_class* p) { delete p; }
+	//	private:
+	policies_test_class(policies_test_class const& c): name_(c.name_)
+	{ ++count; }
 
-		const policies_test_class* internal_ref() { return this; }
+	void member_out_val(int a, int* v) { *v = a * 2; }
+	secret_type* member_secret() { return &sec_; }
+};
 
-		policies_test_class* self_ref()
-		{
-			return this;
-		}
+int policies_test_class::count = 0;
 
-//	private:
-		policies_test_class(const policies_test_class&) {}
-	};
+policies_test_class global;
 
-	policies_test_class global;
+void out_val(float* f) { *f = 3.f; }
+policies_test_class* copy_val() { return &global; }
+policies_test_class const* copy_val_const() { return &global; }
 
-	void out_val(float* f) { *f = 3.f; }
-	policies_test_class* copy_val() { return &global; }
+secret_type* secret() { return &sec_; }
 
-	struct secret_type {};
+void aux_test();
 
-	secret_type sec_;
-	
-	secret_type* secret() { return &sec_; }
+struct test_t {
+	test_t *make(int) { return new test_t(); }
+	void take(test_t*) {}
+};
 
-} // anonymous namespace
+struct MI2;
 
-bool test_policies()
+struct MI1
 {
-	try
-	{
-		using namespace luabind;
+	void add(MI2 *) {}
+};
 
-		lua_State* L = lua_open();
-		lua_closer c(L);
-		lua_baselibopen(L);
+struct MI2 : public MI1
+{
+	virtual ~MI2()
+	{}
+};
 
-		int top = lua_gettop(L);
+struct MI2W : public MI2, public luabind::wrap_base {};
 
-		luabind::open(L);
+void test_main(lua_State* L)
+{
+	using namespace luabind;
 
-		module(L)
-		[
-			class_<policies_test_class>("test")
-				.def(constructor<>())
-				.def("f", &policies_test_class::f, adopt(_1))
-				.def("make", &policies_test_class::make, adopt(return_value))
-				.def("internal_ref", &policies_test_class::internal_ref, dependency(return_value, self))
-				.def("self_ref", &policies_test_class::self_ref, return_reference_to(self)),
-
-			def("out_val", &out_val, pure_out_value(_1)),
-			def("copy_val", &copy_val, copy(result)),
-			def("secret", &secret, discard_result)
-		];
-
-		feedback = 1;
-
-		if (dostring(L, "a = secret()")) return false;
-		
-		// copy
-		if (dostring(L, "a = copy_val()")) return false;
-		if (dostring(L, "a = nil")) return false;
-		if (dostring(L, "collectgarbage(0)")) return false;
-		if (feedback != 0) return false;
-
-		// out_value
-		if (dostring(L, "a = out_val()")) return false;
-
-		// return_reference_to
-		if (dostring(L, "a = test()")) return false;
-		if (feedback != 1) return false;
-		if (dostring(L, "b = a:self_ref()")) return false;
-		if (dostring(L, "a = nil")) return false;
-		if (dostring(L, "collectgarbage(0)")) return false;
-		if (feedback != 1) return false;
-		if (dostring(L, "b = nil")) return false;
-		if (dostring(L, "collectgarbage(0)")) return false;
-		if (feedback != 0) return false;
+	module(L)
+	[
+		class_<test_t>("test_t")
+		.def("make", &test_t::make, adopt(return_value))
+		.def("take", &test_t::take, adopt(_2))
+	];
 	
-		// dependency
-		if (dostring(L, "a = test()")) return false;
-		if (feedback != 1) return false;
-		if (dostring(L, "b = a:internal_ref()")) return false;
-		if (dostring(L, "a = nil")) return false;
-		if (dostring(L, "collectgarbage(0)")) return false;
-		if (feedback != 1) return false;
-		if (dostring(L, "b = nil")) return false;
-		if (dostring(L, "collectgarbage(0)")) return false; // two gc-cycles because dependency-table won't be collected in the same cycle
-		if (dostring(L, "collectgarbage(0)")) return false; // as the object_rep
-		if (feedback != 0) return false;
+	module(L)
+	[
+		class_<policies_test_class>("test")
+			.def(constructor<>())
+			.def("member_out_val", &policies_test_class::member_out_val, pure_out_value(_3))
+			.def("member_secret", &policies_test_class::member_secret, discard_result)
+			.def("f", &policies_test_class::f, adopt(_2))
+			.def("make", &policies_test_class::make, adopt(return_value))
+			.def("internal_ref", &policies_test_class::internal_ref, dependency(result, _1))
+			.def("self_ref", &policies_test_class::self_ref, return_reference_to(_1)),
 
-		// adopt
-		if (dostring(L, "a = test()")) return false;
-		if (feedback != 1) return false;
-		if (dostring(L, "b = a:make('tjosan')")) return false;
-		if (feedback != 2) return false;
-		if (dostring(L, "a:f(b)")) return false;
+		def("out_val", &out_val, pure_out_value(_1)),
+		def("copy_val", &copy_val, copy(result)),
+		def("copy_val_const", &copy_val_const, copy(result)),
+		def("secret", &secret, discard_result),
 
-		if (top != lua_gettop(L)) return false;
+		class_<MI1>("mi1")
+			.def(constructor<>())
+			.def("add",&MI1::add,adopt(_2)),
 
-		c.release();
-		if (feedback != 0) return false;
-	}
-	catch(...)
-	{
-		return false;
-	}
-	return true;
+		class_<MI2,MI2W,MI1>("mi2")
+			.def(constructor<>())
+	];
+
+	// test copy
+	DOSTRING(L,	"a = secret()\n");
+
+	TEST_CHECK(policies_test_class::count == 1);
+
+	DOSTRING(L, "a = copy_val()\n");
+	TEST_CHECK(policies_test_class::count == 2);
+
+	DOSTRING(L, "b = copy_val_const()\n");
+	TEST_CHECK(policies_test_class::count == 3);
+
+	DOSTRING(L,
+		"a = nil\n"
+		"b = nil\n"
+		"collectgarbage()\n");
+
+	// only the global variable left here
+	TEST_CHECK(policies_test_class::count == 1);
+
+	// out_value
+	DOSTRING(L,
+		"a = out_val()\n"
+		"assert(a == 3)");
+
+	// return_reference_to
+	DOSTRING(L,
+		"a = test()\n"
+		"b = a:self_ref()\n"
+		"a = nil\n"
+		"collectgarbage()");
+
+	// a is kept alive as long as b is alive
+	TEST_CHECK(policies_test_class::count == 2);
+
+	DOSTRING(L,
+		"b = nil\n"
+		"collectgarbage()");
+
+	TEST_CHECK(policies_test_class::count == 1);
+
+	DOSTRING(L, "a = test()");
+
+	TEST_CHECK(policies_test_class::count == 2);
+
+	DOSTRING(L,
+		"b = a:internal_ref()\n"
+		"a = nil\n"
+		"collectgarbage()");
+
+	// a is kept alive as long as b is alive
+	TEST_CHECK(policies_test_class::count == 2);
+
+	// two gc-cycles because dependency-table won't be collected in the
+	// same cycle as the object_rep
+	DOSTRING(L,
+		"b = nil\n"
+		"collectgarbage()\n"
+		"collectgarbage()");
+
+	TEST_CHECK(policies_test_class::count == 1);
+
+	// adopt
+	DOSTRING(L, "a = test()");
+
+	TEST_CHECK(policies_test_class::count == 2);
+
+	DOSTRING(L, "b = a:make('tjosan')");
+	DOSTRING(L, "assert(a:member_out_val(3) == 6)");
+	DOSTRING(L, "a:member_secret()");
+
+	// make instantiated a new policies_test_class
+	TEST_CHECK(policies_test_class::count == 3);
+
+	DOSTRING(L, "a:f(b)\n");
+
+	// b was adopted by c++ and deleted the object
+	TEST_CHECK(policies_test_class::count == 2);
+
+	DOSTRING(L, "a = nil\n"
+		"collectgarbage()");
+
+	TEST_CHECK(policies_test_class::count == 1);
+
+	// adopt with wrappers
+	DOSTRING(L, "mi1():add(mi2())");
 }
 

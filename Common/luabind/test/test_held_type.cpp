@@ -1,303 +1,213 @@
+// Copyright (c) 2004 Daniel Wallin and Arvid Norberg
+
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+// ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+// SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+// ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+// OR OTHER DEALINGS IN THE SOFTWARE.
+
+#include "test.hpp"
+#include <luabind/luabind.hpp>
+#include <luabind/version.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 #include <memory>
 
-#include "test.h"
+namespace luabind {
 
-namespace luabind
-{
-	template<class T>
-	T* get_pointer(boost::shared_ptr<T>& p) { return p.get(); }
+#ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
+    template<class T>
+    T* get_pointer(boost::shared_ptr<T> const& p) { return p.get(); }
+#endif
 
-	template<class A>
-	boost::shared_ptr<const A>* get_const_holder(boost::shared_ptr<A>*)
-	{
-		return 0;
-	}
 }
 
-namespace
+struct base : counted_type<base>
 {
+    base(): n(4) {}
+    virtual ~base() {}
 
-	LUABIND_ANONYMOUS_FIX int feedback = 0;
+    void f(int)
+    {
+    }
 
-	struct base
-	{
-		base(): n(4) { feedback = 3; }
-		virtual ~base() { feedback = 1; }
-
-		void f(int)
-		{
-			feedback = n;
-		}
-
-		int n;
-	};
-
-	// this is here to make sure the pointer offsetting works
-	struct first_base
-	{
-		virtual void a() {}
-		int padding;
-	};
-
-	struct derived: first_base, base
-	{
-		derived(): n2(7) { feedback = 7; }
-		void f() { feedback = 5; }
-		int n2;
-	};
-
-	void tester(base* t)
-	{
-		if (t->n == 4) feedback = 2;
-	}
-
-	void tester_(derived* t)
-	{
-		if (t->n2 == 7) feedback = 8;
-	}
-
-	void tester2(boost::shared_ptr<base> t)
-	{
-		if (t->n == 4) feedback = 9;
-	}
-
-	void tester3(boost::shared_ptr<const base> t)
-	{
-		if (t->n == 4) feedback = 10;
-	}
-
-	void tester4(const boost::shared_ptr<const base>& t)
-	{
-		if (t->n == 4) feedback = 11;
-	}
-
-	void tester5(const boost::shared_ptr<const base>* t)
-	{
-		if ((*t)->n == 4) feedback = 12;
-	}
-
-	void tester6(const boost::shared_ptr<base>* t)
-	{
-		if ((*t)->n == 4) feedback = 13;
-	}
-
-	void tester7(boost::shared_ptr<base>* t)
-	{
-		if ((*t)->n == 4) feedback = 14;
-	}
-
-	boost::shared_ptr<base> tester9()
-	{
-		feedback = 20;
-		return boost::shared_ptr<base>(new base());
-	}
-
-	struct tester10
-	{
-		tester10() : m_member(new base()) {}
-		const boost::shared_ptr<base>& test() { return m_member; }
-		boost::shared_ptr<base> m_member;
-	};
-
-	struct base_2 {};
-	
-	LUABIND_ANONYMOUS_FIX int pointer_cnt = 0;
-
-	struct base_holder
-	{
-		static int counter;
-			  
-		explicit base_holder(base_2* p): ptr(p), secret(2068) 
-		{ ++counter; }
-
-		base_holder(const base_holder&)
-			: secret(9999)
-		{
-			++counter;
-		}
-
-		~base_holder()
-		{ 
-			--counter;
-			assert(secret == 2068);
-			secret = 0;
-		}
-
-		base_2* get() const { return ptr; }
-
-		base_2* ptr;
-
-		int secret;
-	};
-
-	int base_holder::counter = 0;
-	
-	struct const_base_holder
-	{
-		static int counter;
-			  
-		explicit const_base_holder(const base_2* p): ptr(p), secret(9999) 
-		{
-			++counter;
-		}
-
-		const_base_holder(const base_holder& x)
-			: secret(9999)
-		{ ++counter; }
-
-		const_base_holder(const const_base_holder&)
-			: secret(9999)
-		{
-			++counter;
-		}
-
-		~const_base_holder()
-		{ 
-			--counter;
-			assert(secret == 9999);
-			secret = 0;
-		}
-
-		const base_2* get() const { return ptr; }
-
-		const base_2* ptr;
-
-		int secret;
-		char garbage[16];
-	};
-
-	int const_base_holder::counter = 0;
-
-	void tester8(const const_base_holder&)
-	{
-		feedback = 100;
-	}
-
-	void tester15(const_base_holder)
-	{
-		feedback = 101;
-	}
-	
-	const_base_holder tester16()
-	{
-		return const_base_holder(0);
-	}
-	
-} // anonymous namespace
-
-namespace luabind
+    int n;
+};
+    
+// this is here to make sure the pointer offsetting works
+struct first_base : counted_type<first_base>
 {
-	base_2* get_pointer(const base_holder& p) { return p.get(); }
-	const base_2* get_pointer(const const_base_holder& p) { return p.get(); }
+    virtual ~first_base() {}
+    virtual void a() {}
+    int padding;
+};
 
-	const_base_holder* get_const_holder(base_holder*)
-	{
-		return 0;
-	}
+struct derived : first_base, base
+{
+    derived(): n2(7) {}
+    void f() {}
+    int n2;
+};
+
+COUNTER_GUARD(first_base);
+COUNTER_GUARD(base);
+
+int feedback = 0;
+
+void tester(base* t)
+{
+    if (t->n == 4) feedback = 1;
 }
 
-bool test_held_type()
+void tester_(derived* t)
 {
-	using namespace luabind;
-
-	boost::shared_ptr<base> ptr(new base());
-
-	{
-		lua_State* L = lua_open();
-		lua_baselibopen(L);
-		lua_closer c(L);
-		int top = lua_gettop(L);
-
-		open(L);
-
-		module(L)
-		[
-			def("tester", &tester),
-			def("tester", &tester_),
-			def("tester2", &tester2),
-			def("tester3", &tester3),
-			def("tester4", &tester4),
-			def("tester5", &tester5),
-			def("tester6", &tester6),
-			def("tester7", &tester7),
-			def("tester8", &tester8),
-			def("tester9", &tester9),
-			def("tester15", &tester15),
-			def("tester16", &tester16),
-	
-			class_<base, boost::shared_ptr<base> >("base")
-				.def(constructor<>())
-				.def("f", &base::f),
-
-			class_<derived, base, boost::shared_ptr<base> >("derived")
-				.def(constructor<>())
-				.def("f", &derived::f),
-
-			class_<tester10>("tester10")
-				.def(constructor<>())
-				.def("test", &tester10::test),
-
-			class_<base_2, base_holder>("base_")
-				.def(constructor<>())
-		];
-
-		lua_gettop(L);
-
-		object g = get_globals(L);
-		g["test"] = ptr;
-		g["foobar"] = boost::shared_ptr<const base>(new base());
-
-		if (dostring(L, "tester(test)")) return false;
-		if (feedback != 2) return false;
-		if (dostring(L, "a = base()")) return false;
-		if (feedback != 3) return false;
-		if (dostring(L, "b = derived()")) return false;
-		if (feedback != 7) return false;
-		if (dostring(L, "tester(a)")) return false;
-		if (feedback != 2) return false;
-		if (dostring(L, "tester(b)")) return false;
-		if (feedback != 8) return false;
-		if (dostring(L, "tester2(b)")) return false;
-		if (feedback != 9) return false;
-		if (dostring(L, "tester3(b)")) return false;
-		if (feedback != 10) return false;
-		if (dostring(L, "tester4(foobar)")) return false;
-		if (feedback != 11) return false;
-		if (dostring(L, "tester5(foobar)")) return false;
-		if (feedback != 12) return false;
-		if (dostring(L, "tester6(b)")) return false;
-		if (feedback != 13) return false;
-		if (dostring(L, "tester7(b)")) return false;
-		if (feedback != 14) return false;
-//		if (dostring(L, "tester8(b)")) return false;
-//		if (feedback != 19) return false;
-		if (dostring(L, "c = tester9()")) return false;
-		if (feedback != 3) return false;
-		feedback= 0;
-
-		if (dostring(L, "d = tester10()")) return false;
-		if (dostring(L, "e = d:test()")) return false;
-		if (feedback != 3) return false;
-
-		if (dostring(L, "a = base_()")) return false;
-		if (dostring(L, "tester8(a)")) return false;
-		if (feedback != 100) return false;
-		if (dostring(L, "tester15(a)")) return false;
-		if (feedback != 101) return false;
-		if (dostring(L, "tester8(tester16())")) return false;
-		if (feedback != 100) return false;
-		
-		if (top != lua_gettop(L)) return false;
-	}
-
-	ptr.reset();
-	
-	if (feedback != 1) return false;
-
-	if (base_holder::counter != 0) return false;
-	if (const_base_holder::counter != 0) return false;
-
-	return true;
+    if (t->n2 == 7) feedback = 2;
 }
+
+void tester2(boost::shared_ptr<base> t)
+{
+    if (t->n == 4) feedback = 3;
+}
+
+void tester3(boost::shared_ptr<const base> t)
+{
+    if (t->n == 4) feedback = 4;
+}
+
+void tester4(const boost::shared_ptr<const base>& t)
+{
+    if (t->n == 4) feedback = 5;
+}
+
+void tester5(const boost::shared_ptr<const base>* t)
+{
+    if ((*t)->n == 4) feedback = 6;
+}
+
+void tester6(const boost::shared_ptr<base>* t)
+{
+    if ((*t)->n == 4) feedback = 7;
+}
+
+void tester7(boost::shared_ptr<base>* t)
+{
+    if ((*t)->n == 4) feedback = 8;
+}
+
+boost::shared_ptr<base> tester9()
+{
+    feedback = 9;
+    return boost::shared_ptr<base>(new base());
+}
+
+void tester10(boost::shared_ptr<base> const& r)
+{
+	if (r->n == 4) feedback = 10;
+}
+
+void tester11(boost::shared_ptr<const base> const& r)
+{
+	if (r->n == 4) feedback = 11;
+}
+
+void tester12(boost::shared_ptr<derived> const& r)
+{
+	if (r->n2 == 7) feedback = 12;
+}
+
+derived tester13()
+{
+    feedback = 13;
+	derived d;
+	d.n2 = 13;
+	return d;
+}
+
+void test_main(lua_State* L)
+{
+    boost::shared_ptr<base> base_ptr(new base());
+
+    using namespace luabind;
+  
+    module(L)
+    [
+        def("tester", &tester),
+        def("tester", &tester_),
+        def("tester2", &tester2),
+        def("tester3", &tester3),
+        def("tester4", &tester4),
+        def("tester5", &tester5),
+        def("tester6", &tester6),
+        def("tester7", &tester7),
+        def("tester9", &tester9),
+		def("tester10", &tester10),
+		def("tester11", &tester11),
+		def("tester12", &tester12),
+		def("tester13", &tester13),
+
+        class_<base, boost::shared_ptr<base> >("base")
+            .def(constructor<>())
+            .def("f", &base::f),
+
+        class_<derived, base, boost::shared_ptr<base> >("derived")
+            .def(constructor<>())
+            .def("f", &derived::f)
+    ];
+
+    object g = globals(L);
+    g["ptr"] = base_ptr;
+
+    DOSTRING(L, "tester(ptr)");
+    TEST_CHECK(feedback == 1);
+
+    DOSTRING(L, 
+        "a = base()\n"
+        "b = derived()\n");
+
+#if LUABIND_VERSION != 900
+    DOSTRING(L, "tester(b)");
+    TEST_CHECK(feedback == 2);
+#endif
+
+    DOSTRING(L, "tester(a)");
+    TEST_CHECK(feedback == 1);
+
+    DOSTRING(L, "tester2(b)");
+    TEST_CHECK(feedback == 3);
+
+    feedback = 0;
+
+    DOSTRING(L, "tester10(b)");
+    TEST_CHECK(feedback == 10);
+
+/* this test is messed up, shared_ptr<derived> isn't even registered
+	DOSTRING_EXPECTED(
+		L
+		, "tester12(b)"
+		, "no match for function call 'tester12' with the parameters (derived)\n"
+		"candidates are:\n"
+		"tester12(const custom&)\n");
+*/
+#if LUABIND_VERSION != 900
+	object nil = globals(L)["non_existing_variable_is_nil"];
+	TEST_CHECK(object_cast<boost::shared_ptr<base> >(nil).get() == 0);
+	TEST_CHECK(object_cast<boost::shared_ptr<const base> >(nil).get() == 0);
+#endif
+
+    DOSTRING(L, "tester13()");
+    TEST_CHECK(feedback == 13);
+}
+
