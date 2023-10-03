@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{f9a15513-59aa-4554-b6a4-c439ddf925a8}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\class.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\class_info.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\class_registry.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\class_rep.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\create_class.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\error.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\exception_handler.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\function.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\inheritance.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\link_compatibility.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\object_rep.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\open.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\pcall.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\scope.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\stack_content_by_name.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\weak_ref.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\wrapper_base.cpp" />
+  </ItemGroup>
+</Project>
