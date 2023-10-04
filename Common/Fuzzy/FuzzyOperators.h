@@ -27,7 +27,7 @@ private:
   std::vector<FuzzyTerm*> m_Terms;
 
   //disallow assignment
-  FzAND& operator=(const FzAND&);
+  FzAND& operator=(const FzAND&) = delete;
 
 public:
 
@@ -37,9 +37,9 @@ public:
   FzAND(const FzAND& fa);
    
   //ctors accepting fuzzy terms.
-  FzAND(FuzzyTerm& op1, FuzzyTerm& op2);
-  FzAND(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3);
-  FzAND(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3, FuzzyTerm& op4);
+  FzAND(const FuzzyTerm& op1, const FuzzyTerm& op2);
+  FzAND(const FuzzyTerm& op1, const FuzzyTerm& op2, const FuzzyTerm& op3);
+  FzAND(const FuzzyTerm& op1, const FuzzyTerm& op2, const FuzzyTerm& op3, const FuzzyTerm& op4);
 
   //virtual ctor
   FuzzyTerm* Clone()const{return new FzAND(*this);}
@@ -73,9 +73,9 @@ public:
   FzOR(const FzOR& fa);
    
   //ctors accepting fuzzy terms.
-  FzOR(FuzzyTerm& op1, FuzzyTerm& op2);
-  FzOR(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3);
-  FzOR(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3, FuzzyTerm& op4);
+  FzOR(const FuzzyTerm& op1, const FuzzyTerm& op2);
+  FzOR(const FuzzyTerm& op1, const FuzzyTerm& op2, const FuzzyTerm& op3);
+  FzOR(const FuzzyTerm& op1, const FuzzyTerm& op2, const FuzzyTerm& op3, const FuzzyTerm& op4);
 
   //virtual ctor
   FuzzyTerm* Clone()const{return new FzOR(*this);}

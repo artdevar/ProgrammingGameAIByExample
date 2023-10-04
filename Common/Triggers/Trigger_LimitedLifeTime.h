@@ -11,7 +11,7 @@
 //            number of update steps
 //
 //-----------------------------------------------------------------------------
-#include "Trigger.h"
+#include "Triggers/Trigger.h"
 
 
 template <class entity_type>
@@ -38,7 +38,7 @@ public:
     //the game
     if (--m_iLifetime <= 0)
     {
-      SetToBeRemovedFromGame();
+      this->SetToBeRemovedFromGame();
     }
   }
 

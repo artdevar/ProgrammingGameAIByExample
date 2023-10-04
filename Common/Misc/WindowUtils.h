@@ -41,8 +41,8 @@ void CheckMenuItemAppropriately(HWND hwnd, UINT MenuItem, bool b);
 //strings
 bool CheckBufferLength(char* buff, int MaxLength, unsigned int& BufferLength);
 
-void ErrorBox(std::string& msg);
-void ErrorBox(char* msg);
+void ErrorBox(const std::string& msg);
+void ErrorBox(const char* msg);
 
 //gets the coordinates of the cursor relative to an active window 
 Vector2D GetClientCursorPosition();

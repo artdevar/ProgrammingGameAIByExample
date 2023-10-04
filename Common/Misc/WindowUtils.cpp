@@ -60,12 +60,12 @@ bool CheckBufferLength(char* buff, int MaxLength, int& BufferLength)
   return true;
 }
 
-void ErrorBox(std::string& msg)
+void ErrorBox(const std::string& msg)
 {
   MessageBox(NULL, msg.c_str(), "Error", MB_OK);
 }
 
-void ErrorBox(char* msg)
+void ErrorBox(const char* msg)
 {
   MessageBox(NULL, msg, "Error", MB_OK);
 }

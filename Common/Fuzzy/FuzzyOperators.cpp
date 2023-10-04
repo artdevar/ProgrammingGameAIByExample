@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 FzAND::FzAND(const FzAND& fa)
 {
-   std::vector<FuzzyTerm*>::const_iterator curTerm;
+   typename std::vector<FuzzyTerm*>::const_iterator curTerm;
    for (curTerm = fa.m_Terms.begin(); curTerm != fa.m_Terms.end(); ++curTerm)
    {
      m_Terms.push_back((*curTerm)->Clone());
@@ -15,14 +15,14 @@ FzAND::FzAND(const FzAND& fa)
 }
    
   //ctor using two terms
-FzAND::FzAND(FuzzyTerm& op1, FuzzyTerm& op2)
+FzAND::FzAND(const FuzzyTerm& op1, const FuzzyTerm& op2)
 {
    m_Terms.push_back(op1.Clone());
    m_Terms.push_back(op2.Clone());
 }
 
 //ctor using three terms
-FzAND::FzAND(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3)
+FzAND::FzAND(const FuzzyTerm& op1, const FuzzyTerm& op2, const FuzzyTerm& op3)
 {
    m_Terms.push_back(op1.Clone());
    m_Terms.push_back(op2.Clone());
@@ -30,7 +30,7 @@ FzAND::FzAND(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3)
 }
 
       //ctor using four terms
-FzAND::FzAND(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3, FuzzyTerm& op4)
+FzAND::FzAND(const FuzzyTerm& op1, const FuzzyTerm& op2, const FuzzyTerm& op3, const FuzzyTerm& op4)
 {
    m_Terms.push_back(op1.Clone());
    m_Terms.push_back(op2.Clone());
@@ -41,7 +41,7 @@ FzAND::FzAND(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3, FuzzyTerm& op4)
 
 FzAND::~FzAND()
 {
-  std::vector<FuzzyTerm*>::iterator curTerm;
+  typename std::vector<FuzzyTerm*>::iterator curTerm;
   for (curTerm = m_Terms.begin(); curTerm != m_Terms.end(); ++curTerm)
   {
     delete *curTerm;
@@ -97,7 +97,7 @@ void FzAND::ClearDOM()
 ///////////////////////////////////////////////////////////////////////////////
 FzOR::FzOR(const FzOR& fa)
 {
-   std::vector<FuzzyTerm*>::const_iterator curTerm;
+   typename std::vector<FuzzyTerm*>::const_iterator curTerm;
    for (curTerm = fa.m_Terms.begin(); curTerm != fa.m_Terms.end(); ++curTerm)
    {
      m_Terms.push_back((*curTerm)->Clone());
@@ -105,14 +105,14 @@ FzOR::FzOR(const FzOR& fa)
 }
    
   //ctor using two terms
-FzOR::FzOR(FuzzyTerm& op1, FuzzyTerm& op2)
+FzOR::FzOR(const FuzzyTerm& op1, const FuzzyTerm& op2)
 {
    m_Terms.push_back(op1.Clone());
    m_Terms.push_back(op2.Clone());
 }
 
     //ctor using three terms
-FzOR::FzOR(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3)
+FzOR::FzOR(const FuzzyTerm& op1, const FuzzyTerm& op2, const FuzzyTerm& op3)
 {
    m_Terms.push_back(op1.Clone());
    m_Terms.push_back(op2.Clone());
@@ -120,7 +120,7 @@ FzOR::FzOR(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3)
 }
 
       //ctor using four terms
-FzOR::FzOR(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3, FuzzyTerm& op4)
+FzOR::FzOR(const FuzzyTerm& op1, const FuzzyTerm& op2, const FuzzyTerm& op3, const FuzzyTerm& op4)
 {
    m_Terms.push_back(op1.Clone());
    m_Terms.push_back(op2.Clone());
@@ -131,7 +131,7 @@ FzOR::FzOR(FuzzyTerm& op1, FuzzyTerm& op2, FuzzyTerm& op3, FuzzyTerm& op4)
 
 FzOR::~FzOR()
 {
-  std::vector<FuzzyTerm*>::iterator curTerm;
+  typename std::vector<FuzzyTerm*>::iterator curTerm;
   for (curTerm = m_Terms.begin(); curTerm != m_Terms.end(); ++curTerm)
   {
     delete *curTerm;

@@ -16,12 +16,7 @@ extern "C"
   #include <lauxlib.h>
 }
 
-#pragma comment(lib, "lua.lib")
-#pragma comment(lib, "lualib.lib")
-
 #include "LuaHelperFunctions.h"
-
-
 
 class Scriptor
 {
@@ -34,12 +29,12 @@ public:
   Scriptor():m_pLuaState(lua_open())
   {
     //open the libraries
-    OpenLuaLibraries(m_pLuaState);
+    luaL_openlibs(m_pLuaState);
   }
 
   ~Scriptor(){lua_close(m_pLuaState);}
 
-  void RunScriptFile(char* ScriptName)
+  void RunScriptFile(const char* ScriptName)
   {
      RunLuaScript(m_pLuaState, ScriptName);
   }
@@ -47,27 +42,27 @@ public:
   lua_State* GetState(){return m_pLuaState;}
 
 
-  int GetInt(char* VariableName)
+  int GetInt(const char* VariableName)
   {
     return PopLuaNumber<int>(m_pLuaState, VariableName);
   }
     
-  double GetFloat(char* VariableName)
+  double GetFloat(const char* VariableName)
   {
     return PopLuaNumber<float>(m_pLuaState, VariableName);
   }
 
-  double GetDouble(char* VariableName)
+  double GetDouble(const char* VariableName)
   {
     return PopLuaNumber<double>(m_pLuaState, VariableName);
   }
 
-  std::string GetString(char* VariableName)
+  std::string GetString(const char* VariableName)
   {
     return PopLuaString(m_pLuaState, VariableName);
   }
 
-  bool GetBool(char* VariableName)
+  bool GetBool(const char* VariableName)
   {
     return PopLuaBool(m_pLuaState, VariableName);
   }

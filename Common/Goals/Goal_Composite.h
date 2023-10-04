@@ -77,7 +77,7 @@ public:
 template <class entity_type>
 void Goal_Composite<entity_type>::RemoveAllSubgoals()
 {
-  for (SubgoalList::iterator it = m_SubGoals.begin();
+  for (typename SubgoalList::iterator it = m_SubGoals.begin();
        it != m_SubGoals.end();
        ++it)
   {  
@@ -117,9 +117,9 @@ int Goal_Composite<entity_type>::ProcessSubgoals()
     //reports 'completed' *and* the subgoal list contains additional goals.When
     //this is the case, to ensure the parent keeps processing its subgoal list
     //we must return the 'active' status.
-    if (StatusOfSubGoals == completed && m_SubGoals.size() > 1)
+    if (StatusOfSubGoals == Goal<entity_type>::completed && m_SubGoals.size() > 1)
     {
-      return active;
+      return Goal<entity_type>::active;
     }
 
     return StatusOfSubGoals;
@@ -128,7 +128,7 @@ int Goal_Composite<entity_type>::ProcessSubgoals()
   //no more subgoals to process - return 'completed'
   else
   {
-    return completed;
+    return Goal<entity_type>::completed;
   }
 }
 
@@ -168,7 +168,7 @@ void  Goal_Composite<entity_type>::RenderAtPos(Vector2D& pos, TypeToString* tts)
   pos.x += 10;
 
   gdi->TransparentText();
-  SubgoalList::const_reverse_iterator it;
+  typename SubgoalList::const_reverse_iterator it;
   for (it=m_SubGoals.rbegin(); it != m_SubGoals.rend(); ++it)
   {
     (*it)->RenderAtPos(pos, tts);

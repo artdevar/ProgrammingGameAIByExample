@@ -22,7 +22,7 @@ FuzzyModule::~FuzzyModule()
 }
 
 //----------------------------- AddRule ---------------------------------------
-void FuzzyModule::AddRule(FuzzyTerm& antecedent, FuzzyTerm& consequence)
+void FuzzyModule::AddRule(const FuzzyTerm& antecedent, const FuzzyTerm& consequence)
 {
   m_Rules.push_back(new FuzzyRule(antecedent, consequence));
 }

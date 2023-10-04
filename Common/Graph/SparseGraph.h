@@ -15,7 +15,8 @@
 #include <cassert>
 #include <string>
 #include <iostream>
-
+#include <fstream>
+#include <istream>
 
 #include "2D/Vector2D.h"
 #include "misc/utils.h" 
@@ -296,7 +297,7 @@ public:
 
         GetNextValidNode(curNode);
 
-        return &(*curNode);
+        return end() ? nullptr : &(*curNode);
       }
 
       node_type* next()
@@ -305,7 +306,7 @@ public:
 
         GetNextValidNode(curNode);
 
-        return &(*curNode);
+        return end() ? nullptr : &(*curNode);
       }
 
       bool end()
@@ -360,14 +361,18 @@ public:
       {      
         curNode = G.m_Nodes.begin();
 
-        return GetNextValidNode(curNode);
+        GetNextValidNode(curNode);
+
+        return end() ? nullptr : &(*curNode);
       }
 
       const node_type* next()
       {
         ++curNode;
 
-        return GetNextValidNode(curNode);
+        GetNextValidNode(curNode);
+
+        return end() ? nullptr : &(*curNode);
       }
 
       bool end()

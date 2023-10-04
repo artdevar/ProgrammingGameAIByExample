@@ -1,0 +1,360 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Sources\armory">
+      <UniqueIdentifier>{5a8dfa5c-8f59-43d9-b301-58a3adbc8d1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\goals">
+      <UniqueIdentifier>{b8985624-cae4-4d9a-a906-44e5da2c1a78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\lua">
+      <UniqueIdentifier>{ffe87071-de41-4250-9158-f5e58bd742eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\navigation">
+      <UniqueIdentifier>{d4ccc0ff-a92a-4356-8aa2-6e6274dc294c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\triggers">
+      <UniqueIdentifier>{e14d6590-5293-4bfa-99ee-5a94a3800bc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\maps">
+      <UniqueIdentifier>{284352e5-8113-4e3d-a87b-0974cabd7bcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\goals">
+      <UniqueIdentifier>{b79cd170-1b26-49ab-9b59-728db9562c43}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Files\armory\Projectile_Bolt.cpp">
+      <Filter>Sources\armory</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\armory\Projectile_Pellet.cpp">
+      <Filter>Sources\armory</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\armory\Projectile_Rocket.cpp">
+      <Filter>Sources\armory</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\armory\Projectile_Slug.cpp">
+      <Filter>Sources\armory</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\armory\Raven_Projectile.cpp">
+      <Filter>Sources\armory</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\armory\Raven_Weapon.cpp">
+      <Filter>Sources\armory</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\armory\Weapon_Blaster.cpp">
+      <Filter>Sources\armory</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\armory\Weapon_RailGun.cpp">
+      <Filter>Sources\armory</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\armory\Weapon_RocketLauncher.cpp">
+      <Filter>Sources\armory</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\armory\Weapon_ShotGun.cpp">
+      <Filter>Sources\armory</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\AttackTargetGoal_Evaluator.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\ExploreGoal_Evaluator.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\GetHealthGoal_Evaluator.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\GetWeaponGoal_Evaluator.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_AdjustRange.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_AttackTarget.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_DodgeSideToSide.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_Explore.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_FollowPath.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_GetItem.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_HuntTarget.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_MoveToPosition.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_NegotiateDoor.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_SayPhrase.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_SeekToPosition.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_Think.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_TraverseEdge.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Goal_Wander.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Raven_Feature.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\goals\Raven_Goal_Types.cpp">
+      <Filter>Sources\goals</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\lua\Raven_Scriptor.cpp">
+      <Filter>Sources\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\navigation\Raven_PathPlanner.cpp">
+      <Filter>Sources\navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\triggers\Trigger_HealthGiver.cpp">
+      <Filter>Sources\triggers</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\triggers\Trigger_SoundNotify.cpp">
+      <Filter>Sources\triggers</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\triggers\Trigger_WeaponGiver.cpp">
+      <Filter>Sources\triggers</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\GraveMarkers.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\main.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\Raven_Bot.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\Raven_Door.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\Raven_Game.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\Raven_Map.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\Raven_SensoryMemory.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\Raven_SteeringBehaviors.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\Raven_TargetingSystem.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\Raven_UserOptions.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\Raven_WeaponSystem.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Files\armory\Projectile_Bolt.h">
+      <Filter>Sources\armory</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\armory\Projectile_Pellet.h">
+      <Filter>Sources\armory</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\armory\Projectile_Rocket.h">
+      <Filter>Sources\armory</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\armory\Projectile_Slug.h">
+      <Filter>Sources\armory</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\armory\Raven_Projectile.h">
+      <Filter>Sources\armory</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\armory\Raven_Weapon.h">
+      <Filter>Sources\armory</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\armory\Weapon_Blaster.h">
+      <Filter>Sources\armory</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\armory\Weapon_RailGun.h">
+      <Filter>Sources\armory</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\armory\Weapon_RocketLauncher.h">
+      <Filter>Sources\armory</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\armory\Weapon_ShotGun.h">
+      <Filter>Sources\armory</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\AttackTargetGoal_Evaluator.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\ExploreGoal_Evaluator.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\GetHealthGoal_Evaluator.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\GetWeaponGoal_Evaluator.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_AdjustRange.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_AttackTarget.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_DodgeSideToSide.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_Evaluator.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_Explore.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_FollowPath.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_GetItem.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_HuntTarget.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_MoveToPosition.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_NegotiateDoor.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_SeekToPosition.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_Think.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_TraverseEdge.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Goal_Wander.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Raven_Feature.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\Raven_Goal_Types.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\goals\resource.h">
+      <Filter>Sources\goals</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\lua\Raven_Scriptor.h">
+      <Filter>Sources\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\navigation\PathEdge.h">
+      <Filter>Sources\navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\navigation\PathManager.h">
+      <Filter>Sources\navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\navigation\PathTarget.h">
+      <Filter>Sources\navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\navigation\Raven_PathPlanner.h">
+      <Filter>Sources\navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\navigation\SearchTerminationPolicies.h">
+      <Filter>Sources\navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\navigation\TimeSlicedGraphAlgorithms.h">
+      <Filter>Sources\navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\triggers\Trigger_HealthGiver.h">
+      <Filter>Sources\triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\triggers\Trigger_OnButtonSendMsg.h">
+      <Filter>Sources\triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\triggers\Trigger_SoundNotify.h">
+      <Filter>Sources\triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\triggers\Trigger_WeaponGiver.h">
+      <Filter>Sources\triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\constants.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\GraveMarkers.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_Bot.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_Door.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_Game.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_Map.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_Messages.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_ObjectEnumerations.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_SensoryMemory.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_SteeringBehaviors.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_Target.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_TargetingSystem.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_UserOptions.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Raven_WeaponSystem.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\resource.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Files\Script1.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Files\maps\Raven_DM1.map">
+      <Filter>Resources\maps</Filter>
+    </None>
+    <None Include="Files\maps\Raven_DM1_With_Doors.map">
+      <Filter>Resources\maps</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -30,7 +30,7 @@ private:
   //have their m_bRemoveFromGame field set to true.
   void UpdateTriggers()
   {
-    TriggerList::iterator curTrg = m_Triggers.begin();
+    typename TriggerList::iterator curTrg = m_Triggers.begin();
     while (curTrg != m_Triggers.end())
     {
       //remove trigger if dead
@@ -57,14 +57,14 @@ private:
   void TryTriggers(ContainerOfEntities& entities)
   {
     //test each entity against the triggers
-    ContainerOfEntities::iterator curEnt = entities.begin();
+    typename ContainerOfEntities::iterator curEnt = entities.begin();
     for (curEnt; curEnt != entities.end(); ++curEnt)
     {
       //an entity must be ready for its next trigger update and it must be 
       //alive before it is tested against each trigger.
       if ((*curEnt)->isReadyForTriggerUpdate() && (*curEnt)->isAlive())
       {
-        TriggerList::const_iterator curTrg;
+        typename TriggerList::const_iterator curTrg;
         for (curTrg = m_Triggers.begin(); curTrg != m_Triggers.end(); ++curTrg)
         {
           (*curTrg)->Try(*curEnt);
@@ -84,7 +84,7 @@ public:
   //this deletes any current triggers and empties the trigger list
   void Clear()
   {
-    TriggerList::iterator curTrg;
+    typename TriggerList::iterator curTrg;
     for (curTrg = m_Triggers.begin(); curTrg != m_Triggers.end(); ++curTrg)
     {
       delete *curTrg;
@@ -113,7 +113,7 @@ public:
   //some triggers are required to be rendered (like giver-triggers for example)
   void Render()
   {
-    TriggerList::iterator curTrg;
+    typename TriggerList::iterator curTrg;
     for (curTrg = m_Triggers.begin(); curTrg != m_Triggers.end(); ++curTrg)
     {
       (*curTrg)->Render();

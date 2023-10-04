@@ -24,7 +24,7 @@ inline bool doWallsObstructLineSegment(Vector2D from,
                                        const ContWall& walls)
 {
   //test against the walls
-  ContWall::const_iterator curWall = walls.begin();
+  typename ContWall::const_iterator curWall = walls.begin();
 
   for (curWall; curWall != walls.end(); ++curWall)
   {
@@ -94,7 +94,7 @@ inline bool FindClosestPointOfIntersectionWithWalls(Vector2D        A,
 {
   distance = MaxDouble;
 
-  ContWall::const_iterator curWall = walls.begin();
+  typename ContWall::const_iterator curWall = walls.begin();
   for (curWall; curWall != walls.end(); ++curWall)
   {
     double dist = 0.0;
@@ -123,7 +123,7 @@ template <class ContWall>
 inline bool doWallsIntersectCircle(const ContWall& walls, Vector2D p, double r)
 {
   //test against the walls
-  ContWall::const_iterator curWall = walls.begin();
+  typename ContWall::const_iterator curWall = walls.begin();
 
   for (curWall; curWall != walls.end(); ++curWall)
   {

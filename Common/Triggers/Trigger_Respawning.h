@@ -11,7 +11,7 @@
 //            after a period of inactivity
 //
 //-----------------------------------------------------------------------------
-#include "Trigger.h"
+#include "Triggers/Trigger.h"
 #include <iosfwd>
 #include <cassert>
 
@@ -32,7 +32,7 @@ protected:
   //update-steps
   void Deactivate()
   {
-    SetInactive();
+    this->SetInactive();
     m_iNumUpdatesRemainingUntilRespawn = m_iNumUpdatesBetweenRespawns;
   }
 
@@ -51,9 +51,9 @@ public:
   //this is called each game-tick to update the trigger's internal state
   virtual void Update()
   {
-    if ( (--m_iNumUpdatesRemainingUntilRespawn <= 0) && !isActive())
+    if ( (--m_iNumUpdatesRemainingUntilRespawn <= 0) && !this->isActive())
     {
-      SetActive();
+      this->SetActive();
     }
   }
   

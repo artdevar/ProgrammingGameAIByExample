@@ -62,7 +62,7 @@ public:
   FuzzyVariable&  CreateFLV(const std::string& VarName);
   
   //adds a rule to the module
-  void            AddRule(FuzzyTerm& antecedent, FuzzyTerm& consequence);
+  void            AddRule(const FuzzyTerm& antecedent, const FuzzyTerm& consequence);
 
   //this method calls the Fuzzify method of the named FLV 
   inline void     Fuzzify(const std::string& NameOfFLV, double val);

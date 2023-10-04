@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{e79d9c4e-738e-4b5f-8252-60cc8be5237d}</ProjectGuid>
+    <RootNamespace>Raven</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+    <Import Project="..\Common\Common.vcxitems" Label="Shared" />
+    <Import Project="..\Common\Luabind\Luabind.vcxitems" Label="Shared" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(ProjectDir)Output\$(Configuration)_$(PlatformTarget)\Executable\</OutDir>
+    <IntDir>$(ProjectDir)Output\$(Configuration)_$(PlatformTarget)\Intermediate\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(ProjectDir)Output\$(Configuration)_$(PlatformTarget)\Executable\</OutDir>
+    <IntDir>$(ProjectDir)Output\$(Configuration)_$(PlatformTarget)\Intermediate\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level1</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\;$(SolutionDir)Common\boost_1_50_0;$(SolutionDir)Common\lua-5.1\include;$(SolutionDir)Common\Luabind;%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)Common\lua-5.1;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>lua.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level1</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\;$(SolutionDir)Common\boost_1_50_0;$(SolutionDir)Common\lua-5.1\include;$(SolutionDir)Common\Luabind;%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)Common\lua-5.1;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>lua.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Files\armory\Projectile_Bolt.cpp" />
+    <ClCompile Include="Files\armory\Projectile_Pellet.cpp" />
+    <ClCompile Include="Files\armory\Projectile_Rocket.cpp" />
+    <ClCompile Include="Files\armory\Projectile_Slug.cpp" />
+    <ClCompile Include="Files\armory\Raven_Projectile.cpp" />
+    <ClCompile Include="Files\armory\Raven_Weapon.cpp" />
+    <ClCompile Include="Files\armory\Weapon_Blaster.cpp" />
+    <ClCompile Include="Files\armory\Weapon_RailGun.cpp" />
+    <ClCompile Include="Files\armory\Weapon_RocketLauncher.cpp" />
+    <ClCompile Include="Files\armory\Weapon_ShotGun.cpp" />
+    <ClCompile Include="Files\goals\AttackTargetGoal_Evaluator.cpp" />
+    <ClCompile Include="Files\goals\ExploreGoal_Evaluator.cpp" />
+    <ClCompile Include="Files\goals\GetHealthGoal_Evaluator.cpp" />
+    <ClCompile Include="Files\goals\GetWeaponGoal_Evaluator.cpp" />
+    <ClCompile Include="Files\goals\Goal_AdjustRange.cpp" />
+    <ClCompile Include="Files\goals\Goal_AttackTarget.cpp" />
+    <ClCompile Include="Files\goals\Goal_DodgeSideToSide.cpp" />
+    <ClCompile Include="Files\goals\Goal_Explore.cpp" />
+    <ClCompile Include="Files\goals\Goal_FollowPath.cpp" />
+    <ClCompile Include="Files\goals\Goal_GetItem.cpp" />
+    <ClCompile Include="Files\goals\Goal_HuntTarget.cpp" />
+    <ClCompile Include="Files\goals\Goal_MoveToPosition.cpp" />
+    <ClCompile Include="Files\goals\Goal_NegotiateDoor.cpp" />
+    <ClCompile Include="Files\goals\Goal_SayPhrase.cpp" />
+    <ClCompile Include="Files\goals\Goal_SeekToPosition.cpp" />
+    <ClCompile Include="Files\goals\Goal_Think.cpp" />
+    <ClCompile Include="Files\goals\Goal_TraverseEdge.cpp" />
+    <ClCompile Include="Files\goals\Goal_Wander.cpp" />
+    <ClCompile Include="Files\goals\Raven_Feature.cpp" />
+    <ClCompile Include="Files\goals\Raven_Goal_Types.cpp" />
+    <ClCompile Include="Files\GraveMarkers.cpp" />
+    <ClCompile Include="Files\lua\Raven_Scriptor.cpp" />
+    <ClCompile Include="Files\main.cpp" />
+    <ClCompile Include="Files\navigation\Raven_PathPlanner.cpp" />
+    <ClCompile Include="Files\Raven_Bot.cpp" />
+    <ClCompile Include="Files\Raven_Door.cpp" />
+    <ClCompile Include="Files\Raven_Game.cpp" />
+    <ClCompile Include="Files\Raven_Map.cpp" />
+    <ClCompile Include="Files\Raven_SensoryMemory.cpp" />
+    <ClCompile Include="Files\Raven_SteeringBehaviors.cpp" />
+    <ClCompile Include="Files\Raven_TargetingSystem.cpp" />
+    <ClCompile Include="Files\Raven_UserOptions.cpp" />
+    <ClCompile Include="Files\Raven_WeaponSystem.cpp" />
+    <ClCompile Include="Files\triggers\Trigger_HealthGiver.cpp" />
+    <ClCompile Include="Files\triggers\Trigger_SoundNotify.cpp" />
+    <ClCompile Include="Files\triggers\Trigger_WeaponGiver.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Files\armory\Projectile_Bolt.h" />
+    <ClInclude Include="Files\armory\Projectile_Pellet.h" />
+    <ClInclude Include="Files\armory\Projectile_Rocket.h" />
+    <ClInclude Include="Files\armory\Projectile_Slug.h" />
+    <ClInclude Include="Files\armory\Raven_Projectile.h" />
+    <ClInclude Include="Files\armory\Raven_Weapon.h" />
+    <ClInclude Include="Files\armory\Weapon_Blaster.h" />
+    <ClInclude Include="Files\armory\Weapon_RailGun.h" />
+    <ClInclude Include="Files\armory\Weapon_RocketLauncher.h" />
+    <ClInclude Include="Files\armory\Weapon_ShotGun.h" />
+    <ClInclude Include="Files\constants.h" />
+    <ClInclude Include="Files\goals\AttackTargetGoal_Evaluator.h" />
+    <ClInclude Include="Files\goals\ExploreGoal_Evaluator.h" />
+    <ClInclude Include="Files\goals\GetHealthGoal_Evaluator.h" />
+    <ClInclude Include="Files\goals\GetWeaponGoal_Evaluator.h" />
+    <ClInclude Include="Files\goals\Goal_AdjustRange.h" />
+    <ClInclude Include="Files\goals\Goal_AttackTarget.h" />
+    <ClInclude Include="Files\goals\Goal_DodgeSideToSide.h" />
+    <ClInclude Include="Files\goals\Goal_Evaluator.h" />
+    <ClInclude Include="Files\goals\Goal_Explore.h" />
+    <ClInclude Include="Files\goals\Goal_FollowPath.h" />
+    <ClInclude Include="Files\goals\Goal_GetItem.h" />
+    <ClInclude Include="Files\goals\Goal_HuntTarget.h" />
+    <ClInclude Include="Files\goals\Goal_MoveToPosition.h" />
+    <ClInclude Include="Files\goals\Goal_NegotiateDoor.h" />
+    <ClInclude Include="Files\goals\Goal_SeekToPosition.h" />
+    <ClInclude Include="Files\goals\Goal_Think.h" />
+    <ClInclude Include="Files\goals\Goal_TraverseEdge.h" />
+    <ClInclude Include="Files\goals\Goal_Wander.h" />
+    <ClInclude Include="Files\goals\Raven_Feature.h" />
+    <ClInclude Include="Files\goals\Raven_Goal_Types.h" />
+    <ClInclude Include="Files\goals\resource.h" />
+    <ClInclude Include="Files\GraveMarkers.h" />
+    <ClInclude Include="Files\lua\Raven_Scriptor.h" />
+    <ClInclude Include="Files\navigation\PathEdge.h" />
+    <ClInclude Include="Files\navigation\PathManager.h" />
+    <ClInclude Include="Files\navigation\PathTarget.h" />
+    <ClInclude Include="Files\navigation\Raven_PathPlanner.h" />
+    <ClInclude Include="Files\navigation\SearchTerminationPolicies.h" />
+    <ClInclude Include="Files\navigation\TimeSlicedGraphAlgorithms.h" />
+    <ClInclude Include="Files\Raven_Bot.h" />
+    <ClInclude Include="Files\Raven_Door.h" />
+    <ClInclude Include="Files\Raven_Game.h" />
+    <ClInclude Include="Files\Raven_Map.h" />
+    <ClInclude Include="Files\Raven_Messages.h" />
+    <ClInclude Include="Files\Raven_ObjectEnumerations.h" />
+    <ClInclude Include="Files\Raven_SensoryMemory.h" />
+    <ClInclude Include="Files\Raven_SteeringBehaviors.h" />
+    <ClInclude Include="Files\Raven_Target.h" />
+    <ClInclude Include="Files\Raven_TargetingSystem.h" />
+    <ClInclude Include="Files\Raven_UserOptions.h" />
+    <ClInclude Include="Files\Raven_WeaponSystem.h" />
+    <ClInclude Include="Files\resource.h" />
+    <ClInclude Include="Files\triggers\Trigger_HealthGiver.h" />
+    <ClInclude Include="Files\triggers\Trigger_OnButtonSendMsg.h" />
+    <ClInclude Include="Files\triggers\Trigger_SoundNotify.h" />
+    <ClInclude Include="Files\triggers\Trigger_WeaponGiver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Files\Script1.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Files\maps\Raven_DM1.map" />
+    <None Include="Files\maps\Raven_DM1_With_Doors.map" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
